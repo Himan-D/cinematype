@@ -243,3 +243,78 @@ textarea { resize: vertical; min-height: 6rem; }
 .file-btn input { display: none; }
 
 .notes { color: var(--muted); font-size: 0.78rem; line-height: 1.4; margin: 0.4rem 0 0.8rem; }
+
+.curl-banner {
+  max-width: 96rem;
+  margin: 0 auto 0.85rem;
+  border: 1px solid var(--line);
+  background: rgba(216, 255, 74, 0.06);
+  padding: 0.65rem 0.85rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8rem;
+}
+
+.curl-banner code {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.72rem;
+  color: var(--accent);
+  word-break: break-all;
+}
+
+.onboard-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.onboard-card {
+  width: min(34rem, 100%);
+  background: #12141a;
+  border: 1px solid var(--line);
+  padding: 1.35rem 1.25rem 1.2rem;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+}
+
+.onboard-card h2 {
+  margin: 0.2rem 0 0.55rem;
+  font-family: "Bebas Neue", Impact, sans-serif;
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  letter-spacing: 0.03em;
+  line-height: 1;
+}
+
+.onboard-kicker {
+  margin: 0;
+  color: var(--accent);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.onboard-body {
+  margin: 0 0 0.85rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.onboard-curl {
+  border: 1px solid var(--line);
+  background: #0c0d11;
+  padding: 0.55rem 0.65rem;
+  margin-bottom: 0.9rem;
+}
+
+.onboard-curl code {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.68rem;
+  color: var(--fg);
+  word-break: break-all;
+}

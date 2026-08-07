@@ -1,17 +1,74 @@
 # cinematype
 
-Typography + caption toolkit for **content creators** — local studio, **export plugins** (CapCut, YouTube, FFmpeg, Remotion, Whisper, OBS…), OFL fonts, kinetic type, transcript→cues, brand kit, and VTT/SRT/ASS.
+**Captions + title cards for content creators — from script to CapCut/YouTube in under a minute.**
 
-## For creators (no app coding)
+[![CI](https://github.com/Himan-D/cinematype/actions/workflows/ci.yml/badge.svg)](https://github.com/Himan-D/cinematype/actions/workflows/ci.yml)
+
+---
+
+## Start in one command
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Himan-D/cinematype/main/scripts/get-cinematype.sh | bash
+```
+
+That installs Bun (if needed), clones the kit, and opens the **studio** at http://localhost:5180.
+
+### One-shot captions (no UI)
+
+```bash
+# SRT for CapCut / Premiere / YouTube
+curl -fsSL https://raw.githubusercontent.com/Himan-D/cinematype/main/scripts/get-cinematype.sh \
+  | bash -s -- captions --text "Stop scrolling. This changes everything." --out hook.srt
+
+# Full CapCut pack (SRT + import checklist)
+curl -fsSL https://raw.githubusercontent.com/Himan-D/cinematype/main/scripts/get-cinematype.sh \
+  | bash -s -- plugin capcut --text "Stop scrolling. This changes everything." --out-dir ./capcut-pack
+
+# YouTube pack (SRT + VTT + chapters + description)
+curl -fsSL https://raw.githubusercontent.com/Himan-D/cinematype/main/scripts/get-cinematype.sh \
+  | bash -s -- plugin youtube --file voiceover.txt --out-dir ./yt-pack
+```
+
+### Already cloned?
 
 ```bash
 bun install
-bun run playground   # http://localhost:5180
+bun run studio          # same as: bunx cinematype studio
+bun run ct -- captions --text "Hook line" --out hook.srt
+bun run ct -- plugin capcut --text "Hook" --out-dir ./pack
 ```
 
-**Studio flow:** pick template → upload video → paste transcript → edit cue times → set brand → download SRT/ASS + title PNG → burn in with the shown FFmpeg command.
+---
 
-Full walkthrough: [docs/CREATOR.md](./docs/CREATOR.md)
+## Creator path (the product)
+
+| Step | What you do | What you get |
+|------|-------------|--------------|
+| 1 | Paste transcript / Whisper JSON | Auto-timed cues |
+| 2 | Tweak times in the cue list | Broadcast-ready timing |
+| 3 | Plugins → CapCut / YouTube | Download pack |
+| 4 | Drop SRT into editor | Upload |
+
+Optional: Brand kit (name + colors), title-card PNG, FFmpeg burn-in command.
+
+---
+
+## CLI
+
+```bash
+bun run ct -- help
+bun run ct -- studio
+bun run ct -- captions --text "..." --format srt --out out.srt
+bun run ct -- plugin <capcut|youtube|tiktok|reels|premiere|davinci|ffmpeg|whisper|remotion|obs>
+bun run ct -- templates
+bun run ct -- plugins
+bun run ct -- doctor
+```
+
+After publish to npm: `bunx cinematype …` / `npx cinematype …`.
+
+---
 
 ## For developers
 
@@ -20,93 +77,27 @@ bun add cinematype
 ```
 
 ```ts
-import {
-  loadFonts,
-  loadBrandKit,
-  transcriptToCues,
-  downloadSubtitles,
-  renderTitleCard,
-  downloadCanvas,
-  ffmpegBurnInCommand,
-} from "cinematype";
+import { transcriptToCues, downloadSubtitles, loadFonts } from "cinematype";
 import { downloadPluginPack } from "cinematype/plugins";
 import "cinematype/css";
 
 await loadFonts();
-
-const cues = transcriptToCues("Hook line.\n\nHere is the value.", {
-  style: "burn",
-  maxWords: 6,
-});
+const cues = transcriptToCues("Hook.\n\nValue.", { style: "burn" });
 downloadSubtitles(cues, "srt", "shorts.srt");
-
-const card = renderTitleCard("STOP SCROLLING", "shorts-punch");
-await downloadCanvas(card, "hook.png");
-
-downloadPluginPack("capcut", {
-  cues,
-  brand: loadBrandKit(),
-  aspect: "youtube-shorts",
-});
-
-console.log(
-  ffmpegBurnInCommand({
-    input: "clip.mp4",
-    output: "burned.mp4",
-    subtitles: "shorts.ass",
-  }),
-);
+downloadPluginPack("capcut", { cues, brand: { /* … */ }, aspect: "youtube-shorts" });
 ```
 
-### React
+Docs: [docs/CREATOR.md](./docs/CREATOR.md) · [docs/PLUGINS.md](./docs/PLUGINS.md) · [docs/ONBOARDING.md](./docs/ONBOARDING.md) · [CONTRIBUTING.md](./CONTRIBUTING.md) · [AGENTS.md](./AGENTS.md) (for AI coding agents)
 
-```tsx
-import {
-  CinematypeProvider,
-  KineticText,
-  TypedVideo,
-  useBrandKit,
-} from "cinematype/react";
-import { getCreatorTemplate } from "cinematype";
+---
 
-const template = getCreatorTemplate("youtube-opener");
+## What’s inside
 
-export function App() {
-  const { brand } = useBrandKit();
-  return (
-    <CinematypeProvider>
-      <KineticText text={brand.channelName} preset="pop" font="bebas-neue" />
-      <TypedVideo src="/reel.mp4" cues={template.cues} />
-    </CinematypeProvider>
-  );
-}
-```
-
-## What’s included (v0.4)
-
-| Area | Details |
-|------|---------|
-| **Studio** | BYO video, cue timeline, transcript/Whisper JSON, brand kit, safe zones, **Plugins** tab |
-| **Plugins** | CapCut, YouTube, TikTok, Reels, Premiere, DaVinci, FFmpeg, Whisper, Remotion, OBS — see [docs/PLUGINS.md](./docs/PLUGINS.md) |
-| **18 OFL fonts** | Impact, editorial, UI, script, mono… |
-| **Captions** | VTT / SRT / ASS + SRT parse |
-| **Transcript** | Plain text / Whisper JSON → timed cues |
-| **Brand kit** | Channel colors/fonts/lower-third (localStorage) |
-| **Frames** | YouTube, Shorts, TikTok, Reels, Stories, square, 4:5… |
-| **Title cards** | Preset PNG generators |
-| **Motion** | 14 kinetic presets |
-| **React hooks** | `useKinetic`, `useVideoOverlay`, `useBrandKit` |
-
-## Scripts
-
-```bash
-bun run playground      # creator studio
-bun run build
-bun test
-bun run vendor:fonts    # refresh fonts/ from Fontsource (dev)
-```
+- **Studio** with first-run onboarding
+- **10 plugins** — CapCut, YouTube, TikTok, Reels, Premiere, DaVinci, FFmpeg, Whisper, Remotion, OBS
+- **18 OFL fonts** · kinetic motion · brand kit · social frames · title cards
+- **React** hooks/components · MIT software + OFL fonts
 
 ## License
 
-- **Software**: MIT — [LICENSE](./LICENSE)
-- **Fonts**: SIL OFL 1.1 — [licenses/OFL.txt](./licenses/OFL.txt), [licenses/ATTRIBUTION.md](./licenses/ATTRIBUTION.md)
+MIT (software) · SIL OFL 1.1 (fonts) — see [LICENSE](./LICENSE) + [licenses/](./licenses/)
