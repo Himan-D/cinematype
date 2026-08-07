@@ -1,0 +1,6 @@
+interface:
+  display_name: "Cinematype"
+  short_description: "Repo-specific patterns and workflows for cinematype"
+  default_prompt: "Use the cinematype repo skill to follow existing architecture, testing, and workflow conventions."
+policy:
+  allow_implicit_invocation: true
