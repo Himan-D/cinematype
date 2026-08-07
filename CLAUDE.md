@@ -4,6 +4,8 @@ globs: "*.ts, *.tsx, *.html, *.css, *.js, *.jsx, package.json"
 alwaysApply: false
 ---
 
+> **AI agents:** read [`AGENTS.md`](./AGENTS.md) first (mission, repo map, PR rules, how to extend).
+
 Default to using Bun instead of Node.js.
 
 - Use `bun <file>` instead of `node <file>` or `ts-node <file>`

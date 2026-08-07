@@ -1,5 +1,7 @@
 # Contributing
 
+AI coding agents should follow **[`AGENTS.md`](./AGENTS.md)** (architecture, curl/CLI, plugins, verification).
+
 ## Branch model
 
 - **`main`** — protected default branch. Never commit feature work directly here.
