@@ -29,11 +29,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/himand/cinematype.git"
+    "url": "git+https://github.com/Himan-D/cinematype.git"
   },
-  "homepage": "https://github.com/himand/cinematype#readme",
+  "homepage": "https://github.com/Himan-D/cinematype#readme",
   "bugs": {
-    "url": "https://github.com/himand/cinematype/issues"
+    "url": "https://github.com/Himan-D/cinematype/issues"
   },
   "sideEffects": [
     "**/*.css",
