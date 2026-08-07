@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
+import { Onboarding } from "./Onboarding";
 import {
   addCue,
   applyBrandCssVars,
@@ -228,14 +229,39 @@ function App() {
     setPluginNotes(lines.join("\n"));
   };
 
+  const copyCurl = async () => {
+    const cmd =
+      "curl -fsSL https://raw.githubusercontent.com/Himan-D/cinematype/main/scripts/get-cinematype.sh | bash";
+    try {
+      await navigator.clipboard.writeText(cmd);
+    } catch {
+      /* ignore */
+    }
+  };
+
   return (
     <>
+      <Onboarding
+        onGoTranscript={() => setTab("transcript")}
+        onGoPlugins={() => setTab("plugins")}
+      />
+
+      <div className="curl-banner">
+        <code>
+          curl -fsSL https://raw.githubusercontent.com/Himan-D/cinematype/main/scripts/get-cinematype.sh
+          | bash
+        </code>
+        <button type="button" className="btn" onClick={() => void copyCurl()}>
+          Copy install
+        </button>
+      </div>
+
       <header className="top">
         <div>
           <h1 className="brand">CINEMATYPE STUDIO</h1>
           <p className="tag">
-            Paste a transcript, time captions, brand your lower-thirds, export
-            SRT/VTT/ASS + title PNGs, then burn in with FFmpeg.
+            Paste a transcript → time captions → download CapCut / YouTube pack.
+            Smooth path from script to upload.
           </p>
         </div>
         <nav className="tabs" aria-label="Studio sections">

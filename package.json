@@ -1,7 +1,10 @@
 {
   "name": "cinematype",
-  "version": "0.4.0",
-  "description": "Typography kit for content creators — studio, plugins (CapCut, YouTube, FFmpeg, Remotion, Whisper…), OFL fonts, captions, brand kit.",
+  "version": "0.5.0",
+  "description": "Captions & type for content creators — curl to studio, CapCut/YouTube packs, CLI, OFL fonts.",
+  "bin": {
+    "cinematype": "./dist/cli.js"
+  },
   "type": "module",
   "license": "MIT",
   "author": "himand",
@@ -45,6 +48,7 @@
     "styles",
     "licenses",
     "docs",
+    "scripts/get-cinematype.sh",
     "README.md",
     "LICENSE"
   ],
@@ -135,6 +139,8 @@
     "test": "bun test",
     "playground": "bun run scripts/serve-playground.ts",
     "studio": "bun run scripts/serve-playground.ts",
+    "ct": "bun run src/cli.ts",
+    "cinematype": "bun run src/cli.ts",
     "lint:package": "publint",
     "prepublishOnly": "bun run build && bun run lint:package"
   },
