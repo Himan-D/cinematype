@@ -1,0 +1,180 @@
+/* cinematype — type scale tokens */
+:root {
+  --ct-text-2xs: 0.512rem;
+  --ct-leading-2xs: 1.65;
+  --ct-tracking-2xs: 0.02em;
+  --ct-weight-2xs: 400;
+  --ct-text-xs: 0.64rem;
+  --ct-leading-xs: 1.65;
+  --ct-tracking-xs: 0.02em;
+  --ct-weight-xs: 400;
+  --ct-text-sm: 0.8rem;
+  --ct-leading-sm: 1.65;
+  --ct-tracking-sm: 0.01em;
+  --ct-weight-sm: 400;
+  --ct-text-base: 1rem;
+  --ct-leading-base: 1.55;
+  --ct-tracking-base: 0em;
+  --ct-weight-base: 400;
+  --ct-text-lg: 1.25rem;
+  --ct-leading-lg: 1.55;
+  --ct-tracking-lg: -0.01em;
+  --ct-weight-lg: 500;
+  --ct-text-xl: 1.5625rem;
+  --ct-leading-xl: 1.35;
+  --ct-tracking-xl: -0.01em;
+  --ct-weight-xl: 600;
+  --ct-text-2xl: 1.9531rem;
+  --ct-leading-2xl: 1.2;
+  --ct-tracking-2xl: -0.02em;
+  --ct-weight-2xl: 600;
+  --ct-text-3xl: 2.4414rem;
+  --ct-leading-3xl: 1.2;
+  --ct-tracking-3xl: -0.02em;
+  --ct-weight-3xl: 650;
+  --ct-text-4xl: 3.0518rem;
+  --ct-leading-4xl: 1.1;
+  --ct-tracking-4xl: -0.03em;
+  --ct-weight-4xl: 650;
+  --ct-text-5xl: 3.8147rem;
+  --ct-leading-5xl: 1.02;
+  --ct-tracking-5xl: -0.03em;
+  --ct-weight-5xl: 650;
+  --ct-text-6xl: 4.7684rem;
+  --ct-leading-6xl: 1.02;
+  --ct-tracking-6xl: -0.04em;
+  --ct-weight-6xl: 700;
+  --ct-text-7xl: 5.9605rem;
+  --ct-leading-7xl: 1.02;
+  --ct-tracking-7xl: -0.04em;
+  --ct-weight-7xl: 700;
+  --ct-text-hero: 7.4506rem;
+  --ct-leading-hero: 1.02;
+  --ct-tracking-hero: -0.04em;
+  --ct-weight-hero: 700;
+  --ct-text-body: var(--ct-text-base);
+  --ct-text-caption: var(--ct-text-sm);
+  --ct-text-label: var(--ct-text-xs);
+  --ct-text-title: var(--ct-text-2xl);
+  --ct-text-headline: var(--ct-text-4xl);
+  --ct-text-display: var(--ct-text-6xl);
+}
+
+/* cinematype — type utilities */
+.ct-text-2xs {
+  font-family: var(--font-ui, 'DM Sans', Outfit, system-ui, sans-serif);
+  font-size: var(--ct-text-2xs);
+  line-height: var(--ct-leading-2xs);
+  letter-spacing: var(--ct-tracking-2xs);
+  font-weight: var(--ct-weight-2xs);
+  font-variation-settings: "wght" var(--ct-weight-2xs);
+}
+
+.ct-text-xs {
+  font-family: var(--font-ui, 'DM Sans', Outfit, system-ui, sans-serif);
+  font-size: var(--ct-text-xs);
+  line-height: var(--ct-leading-xs);
+  letter-spacing: var(--ct-tracking-xs);
+  font-weight: var(--ct-weight-xs);
+  font-variation-settings: "wght" var(--ct-weight-xs);
+}
+
+.ct-text-sm {
+  font-family: var(--font-sans, Inter, system-ui, sans-serif);
+  font-size: var(--ct-text-sm);
+  line-height: var(--ct-leading-sm);
+  letter-spacing: var(--ct-tracking-sm);
+  font-weight: var(--ct-weight-sm);
+  font-variation-settings: "wght" var(--ct-weight-sm);
+}
+
+.ct-text-base {
+  font-family: var(--font-sans, Inter, system-ui, sans-serif);
+  font-size: var(--ct-text-base);
+  line-height: var(--ct-leading-base);
+  letter-spacing: var(--ct-tracking-base);
+  font-weight: var(--ct-weight-base);
+  font-variation-settings: "wght" var(--ct-weight-base);
+}
+
+.ct-text-lg {
+  font-family: var(--font-ui, 'DM Sans', Outfit, system-ui, sans-serif);
+  font-size: var(--ct-text-lg);
+  line-height: var(--ct-leading-lg);
+  letter-spacing: var(--ct-tracking-lg);
+  font-weight: var(--ct-weight-lg);
+  font-variation-settings: "wght" var(--ct-weight-lg);
+}
+
+.ct-text-xl {
+  font-family: var(--font-ui, 'DM Sans', Outfit, system-ui, sans-serif);
+  font-size: var(--ct-text-xl);
+  line-height: var(--ct-leading-xl);
+  letter-spacing: var(--ct-tracking-xl);
+  font-weight: var(--ct-weight-xl);
+  font-variation-settings: "wght" var(--ct-weight-xl);
+}
+
+.ct-text-2xl {
+  font-family: var(--font-serif, 'Playfair Display', Fraunces, Georgia, serif);
+  font-size: var(--ct-text-2xl);
+  line-height: var(--ct-leading-2xl);
+  letter-spacing: var(--ct-tracking-2xl);
+  font-weight: var(--ct-weight-2xl);
+  font-variation-settings: "wght" var(--ct-weight-2xl);
+}
+
+.ct-text-3xl {
+  font-family: var(--font-serif, 'Playfair Display', Fraunces, Georgia, serif);
+  font-size: var(--ct-text-3xl);
+  line-height: var(--ct-leading-3xl);
+  letter-spacing: var(--ct-tracking-3xl);
+  font-weight: var(--ct-weight-3xl);
+  font-variation-settings: "wght" var(--ct-weight-3xl);
+}
+
+.ct-text-4xl {
+  font-family: var(--font-display, Sora, 'Space Grotesk', system-ui, sans-serif);
+  font-size: var(--ct-text-4xl);
+  line-height: var(--ct-leading-4xl);
+  letter-spacing: var(--ct-tracking-4xl);
+  font-weight: var(--ct-weight-4xl);
+  font-variation-settings: "wght" var(--ct-weight-4xl);
+}
+
+.ct-text-5xl {
+  font-family: var(--font-display, Sora, 'Space Grotesk', system-ui, sans-serif);
+  font-size: var(--ct-text-5xl);
+  line-height: var(--ct-leading-5xl);
+  letter-spacing: var(--ct-tracking-5xl);
+  font-weight: var(--ct-weight-5xl);
+  font-variation-settings: "wght" var(--ct-weight-5xl);
+}
+
+.ct-text-6xl {
+  font-family: var(--font-hero, 'Bricolage Grotesque', Syne, system-ui, sans-serif);
+  font-size: var(--ct-text-6xl);
+  line-height: var(--ct-leading-6xl);
+  letter-spacing: var(--ct-tracking-6xl);
+  font-weight: var(--ct-weight-6xl);
+  font-variation-settings: "wght" var(--ct-weight-6xl);
+}
+
+.ct-text-7xl {
+  font-family: var(--font-hero, 'Bricolage Grotesque', Syne, system-ui, sans-serif);
+  font-size: var(--ct-text-7xl);
+  line-height: var(--ct-leading-7xl);
+  letter-spacing: var(--ct-tracking-7xl);
+  font-weight: var(--ct-weight-7xl);
+  font-variation-settings: "wght" var(--ct-weight-7xl);
+}
+
+.ct-text-hero {
+  font-family: var(--font-hero, 'Bricolage Grotesque', Syne, system-ui, sans-serif);
+  font-size: var(--ct-text-hero);
+  line-height: var(--ct-leading-hero);
+  letter-spacing: var(--ct-tracking-hero);
+  font-weight: var(--ct-weight-hero);
+  font-variation-settings: "wght" var(--ct-weight-hero);
+}
+

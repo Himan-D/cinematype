@@ -1,0 +1,656 @@
+/* cinematype — full stylesheet */
+/* cinematype — variable font faces (OFL) */
+
+@font-face {
+  font-family: "Inter";
+  src: url("../fonts/inter/inter-latin-wght-normal.woff2") format("woff2-variations"),
+       url("../fonts/inter/inter-latin-wght-normal.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  ascent-override: 90%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+  size-adjust: 100%;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("../fonts/inter/inter-latin-wght-italic.woff2") format("woff2-variations"),
+       url("../fonts/inter/inter-latin-wght-italic.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  ascent-override: 90%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+  size-adjust: 100%;
+}
+
+@font-face {
+  font-family: "DM Sans";
+  src: url("../fonts/dm-sans/dm-sans-latin-wght-normal.woff2") format("woff2-variations"),
+       url("../fonts/dm-sans/dm-sans-latin-wght-normal.woff2") format("woff2");
+  font-weight: 100 1000;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+
+}
+
+@font-face {
+  font-family: "DM Sans";
+  src: url("../fonts/dm-sans/dm-sans-latin-wght-italic.woff2") format("woff2-variations"),
+       url("../fonts/dm-sans/dm-sans-latin-wght-italic.woff2") format("woff2");
+  font-weight: 100 1000;
+  font-style: italic;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+
+}
+
+@font-face {
+  font-family: "Outfit";
+  src: url("../fonts/outfit/outfit-latin-wght-normal.woff2") format("woff2-variations"),
+       url("../fonts/outfit/outfit-latin-wght-normal.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+
+}
+
+@font-face {
+  font-family: "Manrope";
+  src: url("../fonts/manrope/manrope-latin-wght-normal.woff2") format("woff2-variations"),
+       url("../fonts/manrope/manrope-latin-wght-normal.woff2") format("woff2");
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+
+}
+
+@font-face {
+  font-family: "Rubik";
+  src: url("../fonts/rubik/rubik-latin-wght-normal.woff2") format("woff2-variations"),
+       url("../fonts/rubik/rubik-latin-wght-normal.woff2") format("woff2");
+  font-weight: 300 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+
+}
+
+@font-face {
+  font-family: "Space Grotesk";
+  src: url("../fonts/space-grotesk/space-grotesk-latin-wght-normal.woff2") format("woff2-variations"),
+       url("../fonts/space-grotesk/space-grotesk-latin-wght-normal.woff2") format("woff2");
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+
+}
+
+@font-face {
+  font-family: "Sora";
+  src: url("../fonts/sora/sora-latin-wght-normal.woff2") format("woff2-variations"),
+       url("../fonts/sora/sora-latin-wght-normal.woff2") format("woff2");
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+
+}
+
+@font-face {
+  font-family: "Bricolage Grotesque";
+  src: url("../fonts/bricolage-grotesque/bricolage-grotesque-latin-wght-normal.woff2") format("woff2-variations"),
+       url("../fonts/bricolage-grotesque/bricolage-grotesque-latin-wght-normal.woff2") format("woff2");
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+
+}
+
+@font-face {
+  font-family: "Syne";
+  src: url("../fonts/syne/syne-latin-wght-normal.woff2") format("woff2-variations"),
+       url("../fonts/syne/syne-latin-wght-normal.woff2") format("woff2");
+  font-weight: 400 800;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+
+}
+
+@font-face {
+  font-family: "Bebas Neue";
+  src: url("../fonts/bebas-neue/bebas-neue-latin-400-normal.woff2") format("woff2-variations"),
+       url("../fonts/bebas-neue/bebas-neue-latin-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+
+}
+
+@font-face {
+  font-family: "Anton";
+  src: url("../fonts/anton/anton-latin-400-normal.woff2") format("woff2-variations"),
+       url("../fonts/anton/anton-latin-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+
+}
+
+@font-face {
+  font-family: "Archivo";
+  src: url("../fonts/archivo/archivo-latin-wght-normal.woff2") format("woff2-variations"),
+       url("../fonts/archivo/archivo-latin-wght-normal.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+
+}
+
+@font-face {
+  font-family: "Fraunces";
+  src: url("../fonts/fraunces/fraunces-latin-wght-normal.woff2") format("woff2-variations"),
+       url("../fonts/fraunces/fraunces-latin-wght-normal.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+
+}
+
+@font-face {
+  font-family: "Playfair Display";
+  src: url("../fonts/playfair-display/playfair-display-latin-wght-normal.woff2") format("woff2-variations"),
+       url("../fonts/playfair-display/playfair-display-latin-wght-normal.woff2") format("woff2");
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+
+}
+
+@font-face {
+  font-family: "Playfair Display";
+  src: url("../fonts/playfair-display/playfair-display-latin-wght-italic.woff2") format("woff2-variations"),
+       url("../fonts/playfair-display/playfair-display-latin-wght-italic.woff2") format("woff2");
+  font-weight: 400 900;
+  font-style: italic;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+
+}
+
+@font-face {
+  font-family: "Lora";
+  src: url("../fonts/lora/lora-latin-wght-normal.woff2") format("woff2-variations"),
+       url("../fonts/lora/lora-latin-wght-normal.woff2") format("woff2");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+
+}
+
+@font-face {
+  font-family: "Lora";
+  src: url("../fonts/lora/lora-latin-wght-italic.woff2") format("woff2-variations"),
+       url("../fonts/lora/lora-latin-wght-italic.woff2") format("woff2");
+  font-weight: 400 700;
+  font-style: italic;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+
+}
+
+@font-face {
+  font-family: "Caveat";
+  src: url("../fonts/caveat/caveat-latin-400-normal.woff2") format("woff2-variations"),
+       url("../fonts/caveat/caveat-latin-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+
+}
+
+@font-face {
+  font-family: "Caveat";
+  src: url("../fonts/caveat/caveat-latin-700-normal.woff2") format("woff2-variations"),
+       url("../fonts/caveat/caveat-latin-700-normal.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("../fonts/jetbrains-mono/jetbrains-mono-latin-wght-normal.woff2") format("woff2-variations"),
+       url("../fonts/jetbrains-mono/jetbrains-mono-latin-wght-normal.woff2") format("woff2");
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  src: url("../fonts/geist-mono/geist-mono-latin-wght-normal.woff2") format("woff2-variations"),
+       url("../fonts/geist-mono/geist-mono-latin-wght-normal.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+
+}
+
+/* cinematype — font utility classes */
+
+.ct-font-inter {
+  font-family: "Inter", ui-sans-serif, system-ui, Segoe UI, Helvetica Neue, Arial, sans-serif;
+}
+
+.ct-font-dm-sans {
+  font-family: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+}
+
+.ct-font-outfit {
+  font-family: "Outfit", ui-sans-serif, system-ui, sans-serif;
+}
+
+.ct-font-manrope {
+  font-family: "Manrope", ui-sans-serif, system-ui, sans-serif;
+}
+
+.ct-font-rubik {
+  font-family: "Rubik", ui-sans-serif, system-ui, sans-serif;
+}
+
+.ct-font-space-grotesk {
+  font-family: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+}
+
+.ct-font-sora {
+  font-family: "Sora", ui-sans-serif, system-ui, sans-serif;
+}
+
+.ct-font-bricolage-grotesque {
+  font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+}
+
+.ct-font-syne {
+  font-family: "Syne", ui-sans-serif, system-ui, sans-serif;
+}
+
+.ct-font-bebas-neue {
+  font-family: "Bebas Neue", Impact, Haettenschweiler, Arial Narrow, sans-serif;
+}
+
+.ct-font-anton {
+  font-family: "Anton", Impact, Arial Black, sans-serif;
+}
+
+.ct-font-archivo {
+  font-family: "Archivo", Arial Narrow, ui-sans-serif, sans-serif;
+}
+
+.ct-font-fraunces {
+  font-family: "Fraunces", ui-serif, Georgia, Times New Roman, serif;
+}
+
+.ct-font-playfair-display {
+  font-family: "Playfair Display", Georgia, Times New Roman, serif;
+}
+
+.ct-font-lora {
+  font-family: "Lora", Georgia, serif;
+}
+
+.ct-font-caveat {
+  font-family: "Caveat", Segoe Print, Comic Sans MS, cursive;
+}
+
+.ct-font-jetbrains-mono {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.ct-font-geist-mono {
+  font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.ct-body { font-family: "Inter", ui-sans-serif, system-ui, Segoe UI, Helvetica Neue, Arial, sans-serif; }
+.ct-ui { font-family: "DM Sans", ui-sans-serif, system-ui, sans-serif; }
+.ct-display { font-family: "Sora", ui-sans-serif, system-ui, sans-serif; }
+.ct-soft { font-family: "Rubik", ui-sans-serif, system-ui, sans-serif; }
+.ct-editorial { font-family: "Playfair Display", Georgia, Times New Roman, serif; }
+.ct-bold-display { font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif; }
+.ct-impact { font-family: "Bebas Neue", Impact, Haettenschweiler, Arial Narrow, sans-serif; }
+.ct-condensed { font-family: "Archivo", Arial Narrow, ui-sans-serif, sans-serif; }
+.ct-script { font-family: "Caveat", Segoe Print, Comic Sans MS, cursive; }
+.ct-serif { font-family: "Lora", Georgia, serif; }
+.ct-mono { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+.ct-mono-ui { font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+/* cinematype — type scale tokens */
+:root {
+  --ct-text-2xs: 0.512rem;
+  --ct-leading-2xs: 1.65;
+  --ct-tracking-2xs: 0.02em;
+  --ct-weight-2xs: 400;
+  --ct-text-xs: 0.64rem;
+  --ct-leading-xs: 1.65;
+  --ct-tracking-xs: 0.02em;
+  --ct-weight-xs: 400;
+  --ct-text-sm: 0.8rem;
+  --ct-leading-sm: 1.65;
+  --ct-tracking-sm: 0.01em;
+  --ct-weight-sm: 400;
+  --ct-text-base: 1rem;
+  --ct-leading-base: 1.55;
+  --ct-tracking-base: 0em;
+  --ct-weight-base: 400;
+  --ct-text-lg: 1.25rem;
+  --ct-leading-lg: 1.55;
+  --ct-tracking-lg: -0.01em;
+  --ct-weight-lg: 500;
+  --ct-text-xl: 1.5625rem;
+  --ct-leading-xl: 1.35;
+  --ct-tracking-xl: -0.01em;
+  --ct-weight-xl: 600;
+  --ct-text-2xl: 1.9531rem;
+  --ct-leading-2xl: 1.2;
+  --ct-tracking-2xl: -0.02em;
+  --ct-weight-2xl: 600;
+  --ct-text-3xl: 2.4414rem;
+  --ct-leading-3xl: 1.2;
+  --ct-tracking-3xl: -0.02em;
+  --ct-weight-3xl: 650;
+  --ct-text-4xl: 3.0518rem;
+  --ct-leading-4xl: 1.1;
+  --ct-tracking-4xl: -0.03em;
+  --ct-weight-4xl: 650;
+  --ct-text-5xl: 3.8147rem;
+  --ct-leading-5xl: 1.02;
+  --ct-tracking-5xl: -0.03em;
+  --ct-weight-5xl: 650;
+  --ct-text-6xl: 4.7684rem;
+  --ct-leading-6xl: 1.02;
+  --ct-tracking-6xl: -0.04em;
+  --ct-weight-6xl: 700;
+  --ct-text-7xl: 5.9605rem;
+  --ct-leading-7xl: 1.02;
+  --ct-tracking-7xl: -0.04em;
+  --ct-weight-7xl: 700;
+  --ct-text-hero: 7.4506rem;
+  --ct-leading-hero: 1.02;
+  --ct-tracking-hero: -0.04em;
+  --ct-weight-hero: 700;
+  --ct-text-body: var(--ct-text-base);
+  --ct-text-caption: var(--ct-text-sm);
+  --ct-text-label: var(--ct-text-xs);
+  --ct-text-title: var(--ct-text-2xl);
+  --ct-text-headline: var(--ct-text-4xl);
+  --ct-text-display: var(--ct-text-6xl);
+}
+
+/* cinematype — type utilities */
+.ct-text-2xs {
+  font-family: var(--font-ui, 'DM Sans', Outfit, system-ui, sans-serif);
+  font-size: var(--ct-text-2xs);
+  line-height: var(--ct-leading-2xs);
+  letter-spacing: var(--ct-tracking-2xs);
+  font-weight: var(--ct-weight-2xs);
+  font-variation-settings: "wght" var(--ct-weight-2xs);
+}
+
+.ct-text-xs {
+  font-family: var(--font-ui, 'DM Sans', Outfit, system-ui, sans-serif);
+  font-size: var(--ct-text-xs);
+  line-height: var(--ct-leading-xs);
+  letter-spacing: var(--ct-tracking-xs);
+  font-weight: var(--ct-weight-xs);
+  font-variation-settings: "wght" var(--ct-weight-xs);
+}
+
+.ct-text-sm {
+  font-family: var(--font-sans, Inter, system-ui, sans-serif);
+  font-size: var(--ct-text-sm);
+  line-height: var(--ct-leading-sm);
+  letter-spacing: var(--ct-tracking-sm);
+  font-weight: var(--ct-weight-sm);
+  font-variation-settings: "wght" var(--ct-weight-sm);
+}
+
+.ct-text-base {
+  font-family: var(--font-sans, Inter, system-ui, sans-serif);
+  font-size: var(--ct-text-base);
+  line-height: var(--ct-leading-base);
+  letter-spacing: var(--ct-tracking-base);
+  font-weight: var(--ct-weight-base);
+  font-variation-settings: "wght" var(--ct-weight-base);
+}
+
+.ct-text-lg {
+  font-family: var(--font-ui, 'DM Sans', Outfit, system-ui, sans-serif);
+  font-size: var(--ct-text-lg);
+  line-height: var(--ct-leading-lg);
+  letter-spacing: var(--ct-tracking-lg);
+  font-weight: var(--ct-weight-lg);
+  font-variation-settings: "wght" var(--ct-weight-lg);
+}
+
+.ct-text-xl {
+  font-family: var(--font-ui, 'DM Sans', Outfit, system-ui, sans-serif);
+  font-size: var(--ct-text-xl);
+  line-height: var(--ct-leading-xl);
+  letter-spacing: var(--ct-tracking-xl);
+  font-weight: var(--ct-weight-xl);
+  font-variation-settings: "wght" var(--ct-weight-xl);
+}
+
+.ct-text-2xl {
+  font-family: var(--font-serif, 'Playfair Display', Fraunces, Georgia, serif);
+  font-size: var(--ct-text-2xl);
+  line-height: var(--ct-leading-2xl);
+  letter-spacing: var(--ct-tracking-2xl);
+  font-weight: var(--ct-weight-2xl);
+  font-variation-settings: "wght" var(--ct-weight-2xl);
+}
+
+.ct-text-3xl {
+  font-family: var(--font-serif, 'Playfair Display', Fraunces, Georgia, serif);
+  font-size: var(--ct-text-3xl);
+  line-height: var(--ct-leading-3xl);
+  letter-spacing: var(--ct-tracking-3xl);
+  font-weight: var(--ct-weight-3xl);
+  font-variation-settings: "wght" var(--ct-weight-3xl);
+}
+
+.ct-text-4xl {
+  font-family: var(--font-display, Sora, 'Space Grotesk', system-ui, sans-serif);
+  font-size: var(--ct-text-4xl);
+  line-height: var(--ct-leading-4xl);
+  letter-spacing: var(--ct-tracking-4xl);
+  font-weight: var(--ct-weight-4xl);
+  font-variation-settings: "wght" var(--ct-weight-4xl);
+}
+
+.ct-text-5xl {
+  font-family: var(--font-display, Sora, 'Space Grotesk', system-ui, sans-serif);
+  font-size: var(--ct-text-5xl);
+  line-height: var(--ct-leading-5xl);
+  letter-spacing: var(--ct-tracking-5xl);
+  font-weight: var(--ct-weight-5xl);
+  font-variation-settings: "wght" var(--ct-weight-5xl);
+}
+
+.ct-text-6xl {
+  font-family: var(--font-hero, 'Bricolage Grotesque', Syne, system-ui, sans-serif);
+  font-size: var(--ct-text-6xl);
+  line-height: var(--ct-leading-6xl);
+  letter-spacing: var(--ct-tracking-6xl);
+  font-weight: var(--ct-weight-6xl);
+  font-variation-settings: "wght" var(--ct-weight-6xl);
+}
+
+.ct-text-7xl {
+  font-family: var(--font-hero, 'Bricolage Grotesque', Syne, system-ui, sans-serif);
+  font-size: var(--ct-text-7xl);
+  line-height: var(--ct-leading-7xl);
+  letter-spacing: var(--ct-tracking-7xl);
+  font-weight: var(--ct-weight-7xl);
+  font-variation-settings: "wght" var(--ct-weight-7xl);
+}
+
+.ct-text-hero {
+  font-family: var(--font-hero, 'Bricolage Grotesque', Syne, system-ui, sans-serif);
+  font-size: var(--ct-text-hero);
+  line-height: var(--ct-leading-hero);
+  letter-spacing: var(--ct-tracking-hero);
+  font-weight: var(--ct-weight-hero);
+  font-variation-settings: "wght" var(--ct-weight-hero);
+}
+
+/* cinematype — motion helpers */
+.ct-char,
+.ct-word,
+.ct-line {
+  will-change: transform, opacity, filter;
+  backface-visibility: hidden;
+}
+
+.ct-kinetic {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ct-char,
+  .ct-word,
+  .ct-line {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+    filter: none !important;
+    opacity: 1 !important;
+  }
+}
+
+/* cinematype — video overlay */
+.ct-video-overlay {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 8%;
+  padding-inline: 6%;
+  pointer-events: none;
+  z-index: 5;
+  text-align: center;
+  color: #fff;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.65), 0 1px 2px rgba(0, 0, 0, 0.9);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.ct-video-overlay[data-style="title"] {
+  bottom: auto;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: clamp(1.5rem, 5vw, 3.5rem);
+}
+
+.ct-video-overlay[data-style="lower-third"] {
+  bottom: 12%;
+  text-align: start;
+  font-size: clamp(0.95rem, 2vw, 1.35rem);
+}
+
+.ct-video-overlay[data-style="karaoke"] {
+  bottom: 10%;
+  font-size: clamp(1.1rem, 3vw, 2rem);
+}
+
+.ct-video-overlay[data-style="chapter"] {
+  bottom: auto;
+  top: 8%;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: clamp(1rem, 2.5vw, 1.6rem);
+}
+
+.ct-video-overlay[data-style="end-card"] {
+  bottom: auto;
+  top: 50%;
+  transform: translateY(-50%);
+  letter-spacing: 0.04em;
+  font-size: clamp(1.5rem, 5vw, 3.5rem);
+}
+
+.ct-video-overlay[data-style="speaker"],
+.ct-video-overlay[data-style="lower-third"] {
+  bottom: 12%;
+  text-align: start;
+  left: 6%;
+  right: auto;
+  width: max-content;
+  max-width: 80%;
+  padding: 0.55rem 1rem;
+  background: rgba(0, 0, 0, 0.45);
+  font-size: clamp(0.95rem, 2vw, 1.35rem);
+}
+
+.ct-video-overlay[data-style="burn"] {
+  bottom: 14%;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 88%;
+  padding: 0.45rem 0.85rem;
+  background: rgba(0, 0, 0, 0.72);
+  font-size: clamp(1.05rem, 2.8vw, 1.85rem);
+}
+
+.ct-karaoke-word {
+  display: inline;
+  white-space: pre;
+}
+
+.ct-karaoke-word[data-active="true"] {
+  color: #fff;
+}
+
+.ct-typed-video {
+  position: relative;
+  overflow: hidden;
+  background: #000;
+}
+
+.ct-typed-video video {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.ct-safe-guides {
+  pointer-events: none;
+  position: absolute;
+  inset: 12%;
+  border: 1px dashed rgba(255, 255, 255, 0.25);
+}
+

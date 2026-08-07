@@ -1,0 +1,23 @@
+/* cinematype — motion helpers */
+.ct-char,
+.ct-word,
+.ct-line {
+  will-change: transform, opacity, filter;
+  backface-visibility: hidden;
+}
+
+.ct-kinetic {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ct-char,
+  .ct-word,
+  .ct-line {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+    filter: none !important;
+    opacity: 1 !important;
+  }
+}

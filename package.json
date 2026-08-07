@@ -1,0 +1,176 @@
+{
+  "name": "cinematype",
+  "version": "0.4.0",
+  "description": "Typography kit for content creators — studio, plugins (CapCut, YouTube, FFmpeg, Remotion, Whisper…), OFL fonts, captions, brand kit.",
+  "type": "module",
+  "license": "MIT",
+  "author": "himand",
+  "keywords": [
+    "fonts",
+    "typography",
+    "variable-fonts",
+    "kinetic-typography",
+    "text-animation",
+    "video-captions",
+    "srt",
+    "webvtt",
+    "ass",
+    "title-cards",
+    "thumbnails",
+    "youtube",
+    "tiktok",
+    "reels",
+    "capcut",
+    "content-creators",
+    "font-loading",
+    "design-tokens",
+    "woff2",
+    "cinematype"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/himand/cinematype.git"
+  },
+  "homepage": "https://github.com/himand/cinematype#readme",
+  "bugs": {
+    "url": "https://github.com/himand/cinematype/issues"
+  },
+  "sideEffects": [
+    "**/*.css",
+    "**/*.woff2"
+  ],
+  "files": [
+    "dist",
+    "fonts",
+    "styles",
+    "licenses",
+    "docs",
+    "README.md",
+    "LICENSE"
+  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      },
+      "default": "./dist/index.js"
+    },
+    "./motion": {
+      "import": {
+        "types": "./dist/motion/index.d.ts",
+        "default": "./dist/motion/index.js"
+      },
+      "require": {
+        "types": "./dist/motion/index.d.cts",
+        "default": "./dist/motion/index.cjs"
+      },
+      "default": "./dist/motion/index.js"
+    },
+    "./video": {
+      "import": {
+        "types": "./dist/video/index.d.ts",
+        "default": "./dist/video/index.js"
+      },
+      "require": {
+        "types": "./dist/video/index.d.cts",
+        "default": "./dist/video/index.cjs"
+      },
+      "default": "./dist/video/index.js"
+    },
+    "./react": {
+      "import": {
+        "types": "./dist/react/index.d.ts",
+        "default": "./dist/react/index.js"
+      },
+      "require": {
+        "types": "./dist/react/index.d.cts",
+        "default": "./dist/react/index.cjs"
+      },
+      "default": "./dist/react/index.js"
+    },
+    "./tokens": {
+      "import": {
+        "types": "./dist/tokens/index.d.ts",
+        "default": "./dist/tokens/index.js"
+      },
+      "require": {
+        "types": "./dist/tokens/index.d.cts",
+        "default": "./dist/tokens/index.cjs"
+      },
+      "default": "./dist/tokens/index.js"
+    },
+    "./plugins": {
+      "import": {
+        "types": "./dist/plugins/index.d.ts",
+        "default": "./dist/plugins/index.js"
+      },
+      "require": {
+        "types": "./dist/plugins/index.d.cts",
+        "default": "./dist/plugins/index.cjs"
+      },
+      "default": "./dist/plugins/index.js"
+    },
+    "./css": "./styles/cinematype.css",
+    "./css/fonts": "./styles/fonts.css",
+    "./css/tokens": "./styles/tokens.css",
+    "./css/motion": "./styles/motion.css",
+    "./css/video": "./styles/video.css",
+    "./fonts/*": "./fonts/*",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsup && bun run scripts/copy-assets.ts",
+    "dev": "tsup --watch",
+    "generate:css": "bun run scripts/generate-css.ts",
+    "vendor:fonts": "bun run scripts/vendor-fonts.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test",
+    "playground": "bun run scripts/serve-playground.ts",
+    "studio": "bun run scripts/serve-playground.ts",
+    "lint:package": "publint",
+    "prepublishOnly": "bun run build && bun run lint:package"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@fontsource-variable/archivo": "^5.3.0",
+    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
+    "@fontsource-variable/dm-sans": "^5.3.0",
+    "@fontsource-variable/lora": "^5.3.0",
+    "@fontsource-variable/playfair-display": "^5.3.0",
+    "@fontsource-variable/rubik": "^5.3.0",
+    "@fontsource-variable/sora": "^5.3.0",
+    "@fontsource/anton": "^5.3.0",
+    "@fontsource/bebas-neue": "^5.3.0",
+    "@fontsource/caveat": "^5.3.0",
+    "@types/bun": "latest",
+    "@types/node": "^26.2.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "19",
+    "publint": "^0.3.23",
+    "react": "^19.2.8",
+    "react-dom": "19.2.8",
+    "tsup": "^8.5.1",
+    "typescript": "5.7.3"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
