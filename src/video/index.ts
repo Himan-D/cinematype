@@ -3,6 +3,7 @@ export {
   attachCaptions,
   createVideoOverlay,
   type CaptionCue,
+  type CaptionStyleId,
   type CaptionTrackOptions,
   type OverlayOptions,
   type OverlayController,
@@ -59,7 +60,6 @@ export {
   renderTitleCard,
   listCreatorTemplates,
   getCreatorTemplate,
-  type CaptionStyleId,
   type TitleCardPreset,
   type CreatorTemplate,
 } from "./presets";

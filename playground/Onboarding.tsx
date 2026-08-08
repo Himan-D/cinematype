@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 
-const KEY = "cinematype:onboarded-v1";
+const KEY = "cinematype:onboarded-v2";
 
 export function Onboarding(props: {
-  onGoTranscript: () => void;
-  onGoPlugins: () => void;
+  onGoStudio: () => void;
+  onGoStyle: () => void;
+  onGoDestinations: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
@@ -32,26 +33,35 @@ export function Onboarding(props: {
 
   const steps = [
     {
-      title: "Captions in 60 seconds",
-      body: "cinematype turns a script into CapCut / YouTube-ready captions and title cards — no timeline PhD required.",
+      title: "Make captions look like your brand",
+      body: "Pick a template, preview on video, save your brand kit, then export to CapCut, YouTube, Premiere, and more — without learning SRT.",
       cta: "Show me how",
       action: () => setStep(1),
     },
     {
-      title: "1 · Paste your words",
-      body: "Open Transcript, paste your voiceover (or Whisper JSON). We auto-time the cues — you can drag times after.",
-      cta: "Paste transcript",
+      title: "1 · Style on the preview",
+      body: "Studio opens with a live video preview. Choose a template and paste your transcript — captions appear on the video.",
+      cta: "Open studio",
       action: () => {
-        props.onGoTranscript();
+        props.onGoStudio();
         setStep(2);
       },
     },
     {
-      title: "2 · Download a pack",
-      body: "Plugins → CapCut or YouTube → Download pack. Drop the SRT into your editor. Done.",
-      cta: "Open plugins",
+      title: "2 · Apply your brand",
+      body: "Style / Brand → fonts, colors, caption look. Save a kit you can reuse on every video.",
+      cta: "Open brand",
       action: () => {
-        props.onGoPlugins();
+        props.onGoStyle();
+        setStep(3);
+      },
+    },
+    {
+      title: "3 · Export a destination",
+      body: "Destinations → CapCut or YouTube → Download pack. Drop the files into your editor. Save a .ct project to reopen later.",
+      cta: "Open destinations",
+      action: () => {
+        props.onGoDestinations();
         finish(true);
       },
     },
@@ -62,7 +72,9 @@ export function Onboarding(props: {
   return (
     <div className="onboard-backdrop" role="dialog" aria-modal="true">
       <div className="onboard-card">
-        <p className="onboard-kicker">Welcome · {step + 1}/{steps.length}</p>
+        <p className="onboard-kicker">
+          Welcome · {step + 1}/{steps.length}
+        </p>
         <h2>{current.title}</h2>
         <p className="onboard-body">{current.body}</p>
         <div className="onboard-curl">

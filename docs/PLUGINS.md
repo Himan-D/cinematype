@@ -1,9 +1,11 @@
-# Plugins
+# Destinations (plugins API)
+
+Product language: **destinations**. Package API: `cinematype/plugins` (stable).
 
 Import from `cinematype/plugins` (or the root package for common helpers).
 
-| Plugin | Id | What it exports |
-|--------|----|-----------------|
+| Destination | Id | What it exports |
+|-------------|----|-----------------|
 | CapCut | `capcut` | SRT + import checklist |
 | YouTube | `youtube` | SRT, VTT, chapters, description |
 | TikTok | `tiktok` | Paced SRT + tips |
@@ -39,4 +41,4 @@ const pack = runPlugin("capcut", ctx);
 downloadPluginPack("youtube", ctx);
 ```
 
-In the studio: open the **Plugins** tab → pick a tool → **Download pack**.
+Studio: open the **Destinations** tab to download packs without writing code.

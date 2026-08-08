@@ -2,9 +2,15 @@
  * Video text overlays — WebVTT-friendly captions + kinetic timed lines.
  */
 
-import type { CaptionStyleId } from "./presets";
-
-export type { CaptionStyleId };
+export type CaptionStyleId =
+  | "subtitle"
+  | "title"
+  | "lower-third"
+  | "karaoke"
+  | "chapter"
+  | "end-card"
+  | "speaker"
+  | "burn";
 
 export interface CaptionCue {
   /** Start time in seconds */

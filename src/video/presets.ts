@@ -2,19 +2,11 @@ import { fontStack, type FontId } from "../fonts";
 import type { KineticPreset } from "../motion";
 import type { AspectId } from "./aspects";
 import { framePixels } from "./aspects";
-import type { CaptionCue } from "./captions";
+import type { CaptionCue, CaptionStyleId } from "./captions";
 import type { CanvasTextOptions } from "./canvas";
 import { renderTextFrame } from "./canvas";
 
-export type CaptionStyleId =
-  | "subtitle"
-  | "title"
-  | "lower-third"
-  | "karaoke"
-  | "chapter"
-  | "end-card"
-  | "speaker"
-  | "burn";
+export type { CaptionStyleId };
 
 export interface TitleCardPreset {
   id: string;

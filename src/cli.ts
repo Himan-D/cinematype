@@ -1,20 +1,24 @@
 /**
- * cinematype CLI — captions, plugins, and studio for creators
+ * cinematype CLI — captions, destinations, projects, and studio
  *
  *   bun run ct -- studio
  *   bun run ct -- captions --text "Stop scrolling" --out hook.srt
  *   bun run ct -- plugin capcut --text "Hook..." --out-dir ./pack
+ *   bun run ct -- project save --text "Hook" --out project.ct
  */
 import { mkdirSync, writeFileSync, readFileSync, existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 import {
   DEFAULT_BRAND_KIT,
+  createProject,
   exportSubtitles,
   getCreatorTemplate,
   listCreatorTemplates,
   listPlugins,
   listTitleCardPresets,
+  parseProject,
   runPlugin,
+  serializeProject,
   transcriptToCues,
   whisperJsonToCues,
   type AspectId,
@@ -27,26 +31,29 @@ const VERSION = "0.6.0";
 const ROOT = join(import.meta.dir, "..");
 
 function printHelp() {
-  console.log(`cinematype ${VERSION} — captions & type for creators
+  console.log(`cinematype ${VERSION} — brand once, export captions everywhere
 
 Usage:
   cinematype studio [--port 5180]
   cinematype captions --text "..." [--format srt|vtt|ass] [--out file]
   cinematype captions --file script.txt [--format srt] [--out file]
   cinematype plugin <name> --text "..." [--out-dir ./pack]
-  cinematype plugin <name> --file script.txt [--out-dir ./pack]
+  cinematype project save --text "..." [--out project.ct]
+  cinematype project open --file project.ct
   cinematype templates
   cinematype plugins
   cinematype doctor
   cinematype help
 
-Quick start (no install):
+Destinations (plugin adapters): capcut youtube tiktok reels premiere davinci ffmpeg whisper remotion obs
+
+Quick start:
   curl -fsSL https://raw.githubusercontent.com/Himan-D/cinematype/main/scripts/get-cinematype.sh | bash
 
 Examples:
   cinematype captions --text "Stop scrolling. This changes everything." --out hook.srt
   cinematype plugin capcut --text "Hook line here" --out-dir ./capcut-pack
-  cinematype plugin youtube --file voiceover.txt --out-dir ./yt
+  cinematype project save --text "Hook.\\n\\nValue." --out my.ct
   cinematype studio
 `);
 }
@@ -90,10 +97,10 @@ function toCues(raw: string): CaptionCue[] {
 
 async function cmdStudio(args: string[]) {
   const port = argValue(args, "--port") ?? process.env.PORT ?? "5180";
-  console.log(`\n🎬 Opening cinematype studio on http://localhost:${port}\n`);
-  console.log("   1) Paste your transcript");
-  console.log("   2) Tweak cue times");
-  console.log("   3) Plugins → CapCut / YouTube → Download pack\n");
+  console.log(`\nOpening cinematype studio on http://localhost:${port}\n`);
+  console.log("   1) Paste transcript / pick a template");
+  console.log("   2) Apply brand · preview on video");
+  console.log("   3) Destinations → CapCut / YouTube → Download\n");
 
   const child = Bun.spawn(
     ["bun", "run", join(ROOT, "scripts/serve-playground.ts")],
@@ -112,7 +119,7 @@ function cmdCaptions(args: string[]) {
   const format = (argValue(args, "--format") ?? "srt") as SubtitleFormat;
   const out = argValue(args, "--out") ?? argValue(args, "-o") ?? `captions.${format}`;
   const templateId = argValue(args, "--template");
-  let cues = templateId
+  const cues = templateId
     ? getCreatorTemplate(templateId).cues
     : toCues(loadText(args));
   const body = exportSubtitles(cues, format);
@@ -125,7 +132,7 @@ function cmdPlugin(args: string[]) {
   const id = args[0] as PluginId | undefined;
   if (!id || id.startsWith("-")) {
     console.error("Usage: cinematype plugin <name> --text \"...\" --out-dir ./pack");
-    console.error(`Plugins: ${listPlugins().map((p) => p.id).join(", ")}`);
+    console.error(`Destinations: ${listPlugins().map((p) => p.id).join(", ")}`);
     process.exit(1);
   }
   const rest = args.slice(1);
@@ -171,12 +178,55 @@ function cmdPlugin(args: string[]) {
   console.log(`\nPack ready → ${outDir}`);
 }
 
+function cmdProject(args: string[]) {
+  const sub = args[0];
+  const rest = args.slice(1);
+  if (sub === "save") {
+    const out = resolve(argValue(rest, "--out") ?? argValue(rest, "-o") ?? "project.ct");
+    const platform = argValue(rest, "--platform") ?? "youtube-shorts";
+    const transcript = loadText(rest);
+    const cues = toCues(transcript);
+    const project = createProject({
+      platform,
+      aspect: platform,
+      transcript,
+      cues,
+      brand: { ...DEFAULT_BRAND_KIT },
+    });
+    writeFileSync(out, serializeProject(project), "utf8");
+    console.log(`✓ wrote ${out} (${cues.length} cues · ${project.brand.channelName})`);
+    return;
+  }
+  if (sub === "open") {
+    const file = argValue(rest, "--file") ?? argValue(rest, "-f") ?? rest.find((a) => !a.startsWith("-"));
+    if (!file) {
+      console.error("Usage: cinematype project open --file project.ct");
+      process.exit(1);
+    }
+    const path = resolve(file);
+    if (!existsSync(path)) {
+      console.error(`File not found: ${path}`);
+      process.exit(1);
+    }
+    const project = parseProject(readFileSync(path, "utf8"));
+    console.log(`project: ${path}`);
+    console.log(`  platform: ${project.platform}`);
+    console.log(`  aspect:   ${project.aspect}`);
+    console.log(`  brand:    ${project.brand.name ?? project.brand.channelName}`);
+    console.log(`  cues:     ${project.cues.length}`);
+    console.log(`  template: ${project.templateId ?? "(none)"}`);
+    return;
+  }
+  console.error("Usage: cinematype project <save|open> ...");
+  process.exit(1);
+}
+
 function cmdDoctor() {
   console.log(`cinematype ${VERSION}`);
   console.log(`bun: ${typeof Bun !== "undefined" ? Bun.version : "missing"}`);
   console.log(`root: ${ROOT}`);
   console.log(`templates: ${listCreatorTemplates().length}`);
-  console.log(`plugins: ${listPlugins().length}`);
+  console.log(`destinations: ${listPlugins().length}`);
   console.log(`title cards: ${listTitleCardPresets().length}`);
   console.log("\nNext:");
   console.log("  cinematype studio");
@@ -212,12 +262,17 @@ async function main() {
       break;
     case "plugin":
     case "pack":
+    case "destination":
       cmdPlugin(rest);
+      break;
+    case "project":
+      cmdProject(rest);
       break;
     case "templates":
       cmdTemplates();
       break;
     case "plugins":
+    case "destinations":
       cmdPlugins();
       break;
     case "doctor":
