@@ -2,14 +2,14 @@
 
 ## Promise
 
-> From voiceover script → CapCut/YouTube captions in **under 60 seconds**.
+> **Make your captions look like your brand** — transcript → branded preview → destination export in under 60 seconds.
 
 ## North-star funnel
 
 1. **Discover** — README curl one-liner  
 2. **Activate** — studio opens, welcome wizard  
-3. **Aha** — first SRT/plugin pack downloaded  
-4. **Habit** — brand kit saved, templates reused  
+3. **Aha** — captions look like *their* brand on the video preview  
+4. **Habit** — brand kit reused, `project.ct` saved, destinations re-exported  
 
 ## Install surfaces
 
@@ -20,15 +20,17 @@
 | Curl CapCut pack | `… \| bash -s -- plugin capcut --text "…" --out-dir ./pack` |
 | Local | `bun run studio` / `bun run ct -- …` |
 
-## Success metrics (track later)
+## Success metrics
 
-- Time-to-first-SRT  
-- % users who open Plugins tab  
-- CapCut vs YouTube pack downloads  
-- Return visits (brand kit present in localStorage)
+- Time to first branded preview  
+- Time to first destination export  
+- Brand kits reused / user  
+- `project.ct` save rate  
+- Destination mix (CapCut vs YouTube vs …)
 
 ## Non-goals (for now)
 
 - Cloud accounts  
 - In-browser Whisper model  
+- Full video editor / social publishing  
 - CapCut binary plugin (we export files CapCut already understands)

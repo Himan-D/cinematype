@@ -142,3 +142,36 @@ export function framePixels(
     height: Math.round(frame.height * scale),
   };
 }
+
+/** Creator-facing platform labels → AspectId */
+export const PLATFORM_PRESETS: Record<string, AspectId> = {
+  "YouTube Shorts": "youtube-shorts",
+  TikTok: "tiktok",
+  "Instagram Reels": "reels",
+  YouTube: "youtube",
+  "YouTube Landscape": "youtube",
+  Stories: "stories",
+  Square: "square",
+  Portrait: "portrait",
+};
+
+export function listPlatformPresets(): Array<{ label: string; aspect: AspectId }> {
+  return Object.entries(PLATFORM_PRESETS).map(([label, aspect]) => ({
+    label,
+    aspect,
+  }));
+}
+
+export function resolvePlatformPreset(nameOrId: string): AspectId {
+  if (nameOrId in FRAME_SIZES) return nameOrId as AspectId;
+  const fromLabel = PLATFORM_PRESETS[nameOrId];
+  if (fromLabel) return fromLabel;
+  const lower = nameOrId.toLowerCase();
+  const match = Object.entries(PLATFORM_PRESETS).find(
+    ([label, id]) => label.toLowerCase() === lower || id === lower,
+  );
+  if (match) return match[1];
+  throw new Error(
+    `Unknown platform "${nameOrId}". Try: ${Object.keys(PLATFORM_PRESETS).join(", ")}`,
+  );
+}

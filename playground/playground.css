@@ -172,6 +172,12 @@ textarea { resize: vertical; min-height: 6rem; }
   border: 1px solid var(--line);
   padding: 0.55rem;
   background: rgba(0,0,0,0.25);
+  cursor: pointer;
+}
+
+.cue-row[data-selected="true"] {
+  border-color: var(--accent);
+  background: rgba(216, 255, 74, 0.06);
 }
 
 .cue-row header {
@@ -182,6 +188,34 @@ textarea { resize: vertical; min-height: 6rem; }
   margin-bottom: 0.35rem;
   font-size: 0.75rem;
   color: var(--muted);
+}
+
+.kbd-hint {
+  margin: 0.75rem 0 0;
+  color: var(--muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+}
+
+.color-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin: 0.35rem 0 0.5rem;
+}
+
+.color-row .field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.color-row input[type="color"] {
+  width: 100%;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid var(--line);
+  background: transparent;
 }
 
 .cue-times {

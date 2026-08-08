@@ -2,52 +2,61 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Onboarding } from "./Onboarding";
 import {
+  DEFAULT_CAPTION_STYLE,
   addCue,
   applyBrandCssVars,
   applyBrandToCues,
   brandOverlayOptions,
+  brandToAssOptions,
+  createProject,
   createVideoOverlay,
+  cuesToAss,
+  downloadBlob,
   downloadCanvas,
   downloadPluginPack,
+  downloadProject,
   downloadSubtitles,
   ffmpegRecipe,
   fontStack,
+  framePixels,
   getSafeZone,
   kinetic,
+  listBrandKits,
   listCreatorTemplates,
   listFonts,
-  listFrameSizes,
+  listPlatformPresets,
   listPlugins,
   listTitleCardPresets,
   loadBrandKit,
   loadFonts,
+  mergeCues,
   normalizeCues,
+  parseProject,
   parseSrt,
   removeCue,
   renderTitleCard,
+  resolvePlatformPreset,
   retimeCues,
   runPlugin,
   saveBrandKit,
+  setActiveBrandKit,
   shiftCues,
+  splitCue,
   transcriptToCues,
   updateCue,
+  upsertBrandKit,
   whisperJsonToCues,
   type AspectId,
   type BrandKit,
+  type CaptionAnimation,
   type CaptionCue,
+  type CaptionStyle,
+  type CaptionStyleId,
   type KineticPreset,
   type PluginId,
 } from "../src/index";
 
-type Tab =
-  | "studio"
-  | "transcript"
-  | "plugins"
-  | "brand"
-  | "motion"
-  | "fonts"
-  | "cards"
-  | "export";
+type Tab = "studio" | "style" | "destinations" | "more";
 
 const PRESETS: KineticPreset[] = [
   "fade-up",
@@ -63,21 +72,55 @@ const PRESETS: KineticPreset[] = [
   "glitch",
 ];
 
+const ANIMATIONS: CaptionAnimation[] = [
+  "none",
+  "fade",
+  "pop",
+  "slide",
+  "word-pop",
+  "karaoke",
+  "bounce",
+  "glitch",
+];
+
+const STYLE_IDS: CaptionStyleId[] = [
+  "subtitle",
+  "title",
+  "lower-third",
+  "karaoke",
+  "chapter",
+  "end-card",
+  "speaker",
+  "burn",
+];
+
 const DEMO_VIDEO =
   "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4";
+
+function isTypingTarget(el: EventTarget | null): boolean {
+  if (!(el instanceof HTMLElement)) return false;
+  const tag = el.tagName;
+  return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || el.isContentEditable;
+}
 
 function App() {
   const [ready, setReady] = useState(false);
   const [tab, setTab] = useState<Tab>("studio");
+  const [morePanel, setMorePanel] = useState<"motion" | "fonts" | "cards" | "transcript">(
+    "transcript",
+  );
   const [templateId, setTemplateId] = useState("youtube-opener");
+  const [platformLabel, setPlatformLabel] = useState("YouTube");
   const [aspect, setAspect] = useState<AspectId>("youtube");
   const [cues, setCues] = useState<CaptionCue[]>([]);
+  const [selectedCue, setSelectedCue] = useState(0);
   const [videoSrc, setVideoSrc] = useState(DEMO_VIDEO);
   const [showSafe, setShowSafe] = useState(true);
   const [transcript, setTranscript] = useState(
     "Stop scrolling.\n\nThis one setting changed everything for my channel.\n\nSave this for later and try it on your next upload.",
   );
   const [brand, setBrand] = useState<BrandKit>(() => loadBrandKit());
+  const [kits, setKits] = useState<BrandKit[]>(() => listBrandKits());
   const [preset, setPreset] = useState<KineticPreset>("pop");
   const [cardId, setCardId] = useState("yt-hook");
   const [cardText, setCardText] = useState("STOP SCROLLING");
@@ -91,14 +134,16 @@ function App() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const cardCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const objectUrlRef = useRef<string | null>(null);
+  const projectInputRef = useRef<HTMLInputElement>(null);
 
   const fonts = useMemo(() => listFonts(), []);
   const templates = useMemo(() => listCreatorTemplates(), []);
-  const frames = useMemo(() => listFrameSizes(), []);
+  const platforms = useMemo(() => listPlatformPresets(), []);
   const cards = useMemo(() => listTitleCardPresets(), []);
   const plugins = useMemo(() => listPlugins(), []);
   const template = templates.find((t) => t.id === templateId) ?? templates[0]!;
   const safe = getSafeZone(aspect);
+  const captionStyle: CaptionStyle = brand.caption ?? DEFAULT_CAPTION_STYLE;
   const brandedCues = useMemo(() => applyBrandToCues(cues, brand), [cues, brand]);
   const recipe = useMemo(
     () => ffmpegRecipe("your-video.mp4", `${templateId}.ass`),
@@ -115,6 +160,35 @@ function App() {
     [brandedCues, brand, aspect, hookLine],
   );
 
+  const patchCaption = (patch: Partial<CaptionStyle>) => {
+    setBrand((b) => ({
+      ...b,
+      caption: { ...(b.caption ?? DEFAULT_CAPTION_STYLE), ...patch },
+    }));
+  };
+
+  const patchFonts = (key: "heading" | "body" | "caption", value: string) => {
+    setBrand((b) => {
+      const fontsNext = {
+        heading: b.fonts?.heading ?? b.fontDisplay,
+        body: b.fonts?.body ?? b.fontBody,
+        caption: b.fonts?.caption ?? b.fontCaption ?? b.fontBody,
+        [key]: value,
+      };
+      return {
+        ...b,
+        fonts: fontsNext,
+        fontDisplay: fontsNext.heading,
+        fontBody: fontsNext.body,
+        fontCaption: fontsNext.caption,
+        caption:
+          key === "caption"
+            ? { ...(b.caption ?? DEFAULT_CAPTION_STYLE), fontFamily: value }
+            : b.caption,
+      };
+    });
+  };
+
   useEffect(() => {
     void loadFonts().then(() => setReady(true));
   }, []);
@@ -122,22 +196,26 @@ function App() {
   useEffect(() => {
     setCues(template.cues.map((c) => ({ ...c })));
     setAspect(template.aspect);
+    const match = platforms.find((p) => p.aspect === template.aspect);
+    if (match) setPlatformLabel(match.label);
     const title = template.cues.find((c) => c.style === "title");
     if (title) setHookLine(title.text);
     if (template.titleCard) {
       setCardId(template.titleCard.id);
       setCardText(title?.text ?? cardText);
     }
+    setSelectedCue(0);
   }, [templateId]);
 
   useEffect(() => {
     saveBrandKit(brand);
     applyBrandCssVars(brand);
+    setKits(listBrandKits());
   }, [brand]);
 
   useEffect(() => {
     const el = stageRef.current;
-    if (!el || !ready || tab !== "motion") return;
+    if (!el || !ready || tab !== "more" || morePanel !== "motion") return;
     el.textContent = hookLine;
     const ctrl = kinetic(el, {
       preset,
@@ -145,12 +223,12 @@ function App() {
       autoplay: true,
     });
     return () => ctrl.destroy();
-  }, [preset, ready, tab, hookLine]);
+  }, [preset, ready, tab, morePanel, hookLine]);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video || !ready) return;
-    if (tab !== "studio" && tab !== "transcript" && tab !== "export") return;
+    if (tab !== "studio" && tab !== "style" && tab !== "destinations") return;
     const overlay = createVideoOverlay(video, brandedCues, {
       container: wrapRef.current ?? undefined,
       ...brandOverlayOptions(brand),
@@ -160,7 +238,7 @@ function App() {
   }, [ready, tab, brandedCues, brand, videoSrc, aspect]);
 
   useEffect(() => {
-    if (!ready || (tab !== "cards" && tab !== "export" && tab !== "studio")) return;
+    if (!ready) return;
     try {
       const canvas = renderTitleCard(cardText, cardId, {
         background: brand.backgroundColor,
@@ -171,13 +249,48 @@ function App() {
     } catch {
       setCardUrl("");
     }
-  }, [ready, tab, cardId, cardText, brand]);
+  }, [ready, cardId, cardText, brand]);
 
   useEffect(() => {
     return () => {
       if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (isTypingTarget(e.target)) return;
+      if (e.code === "Space") {
+        e.preventDefault();
+        const v = videoRef.current;
+        if (!v) return;
+        if (v.paused) void v.play();
+        else v.pause();
+        return;
+      }
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setSelectedCue((i) => Math.max(0, i - 1));
+        return;
+      }
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setSelectedCue((i) => Math.min(Math.max(cues.length - 1, 0), i + 1));
+        return;
+      }
+      if (e.key === "s" || e.key === "S") {
+        e.preventDefault();
+        setCues((c) => splitCue(c, selectedCue));
+        return;
+      }
+      if (e.key === "m" || e.key === "M") {
+        e.preventDefault();
+        setCues((c) => mergeCues(c, selectedCue));
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [cues.length, selectedCue]);
 
   const onVideoFile = (file: File | null) => {
     if (!file) return;
@@ -191,6 +304,7 @@ function App() {
     if (!file) return;
     const text = await file.text();
     setCues(normalizeCues(parseSrt(text)));
+    setSelectedCue(0);
   };
 
   const applyTranscript = () => {
@@ -199,9 +313,10 @@ function App() {
       try {
         setCues(whisperJsonToCues(JSON.parse(trimmed)));
         setTab("studio");
+        setSelectedCue(0);
         return;
       } catch {
-        // fall through to plain text
+        /* plain text */
       }
     }
     setCues(
@@ -215,6 +330,7 @@ function App() {
       }),
     );
     setTab("studio");
+    setSelectedCue(0);
   };
 
   const runSelectedPlugin = (download: boolean) => {
@@ -229,6 +345,47 @@ function App() {
     setPluginNotes(lines.join("\n"));
   };
 
+  const saveProjectFile = () => {
+    const project = createProject({
+      platform: platformLabel,
+      aspect,
+      transcript,
+      cues,
+      brand,
+      style: captionStyle,
+      templateId,
+      hookLine,
+    });
+    downloadProject(project, `${templateId || "project"}.ct`);
+  };
+
+  const openProjectFile = async (file: File | null) => {
+    if (!file) return;
+    try {
+      const project = parseProject(await file.text());
+      setCues(project.cues);
+      setBrand(project.brand);
+      saveBrandKit(project.brand);
+      setKits(listBrandKits());
+      setAspect(project.aspect as AspectId);
+      setPlatformLabel(project.platform);
+      if (project.templateId) setTemplateId(project.templateId);
+      if (project.transcript) setTranscript(project.transcript);
+      if (project.hookLine) setHookLine(project.hookLine);
+      setSelectedCue(0);
+      setTab("studio");
+    } catch (err) {
+      setPluginNotes(`Could not open project: ${String(err)}`);
+      setTab("destinations");
+    }
+  };
+
+  const downloadAss = () => {
+    const { width, height } = framePixels(aspect);
+    const body = cuesToAss(brandedCues, brandToAssOptions(brand, width, height));
+    downloadBlob(new Blob([body], { type: "text/plain" }), `${templateId}.ass`);
+  };
+
   const copyCurl = async () => {
     const cmd =
       "curl -fsSL https://raw.githubusercontent.com/Himan-D/cinematype/main/scripts/get-cinematype.sh | bash";
@@ -239,11 +396,14 @@ function App() {
     }
   };
 
+  const showPreview = tab === "studio" || tab === "style" || tab === "destinations";
+
   return (
     <>
       <Onboarding
-        onGoTranscript={() => setTab("transcript")}
-        onGoPlugins={() => setTab("plugins")}
+        onGoStudio={() => setTab("studio")}
+        onGoStyle={() => setTab("style")}
+        onGoDestinations={() => setTab("destinations")}
       />
 
       <div className="curl-banner">
@@ -258,23 +418,18 @@ function App() {
 
       <header className="top">
         <div>
-          <h1 className="brand">CINEMATYPE STUDIO</h1>
+          <h1 className="brand">CINEMATYPE</h1>
           <p className="tag">
-            Paste a transcript → time captions → download CapCut / YouTube pack.
-            Smooth path from script to upload.
+            Create your caption style once. Export it everywhere.
           </p>
         </div>
         <nav className="tabs" aria-label="Studio sections">
           {(
             [
               ["studio", "Studio"],
-              ["transcript", "Transcript"],
-              ["plugins", "Plugins"],
-              ["brand", "Brand"],
-              ["motion", "Motion"],
-              ["fonts", "Fonts"],
-              ["cards", "Cards"],
-              ["export", "Export"],
+              ["style", "Style / Brand"],
+              ["destinations", "Destinations"],
+              ["more", "More"],
             ] as const
           ).map(([id, label]) => (
             <button
@@ -304,19 +459,23 @@ function App() {
             ))}
           </select>
 
-          <label className="field">Frame</label>
+          <label className="field">Platform</label>
           <select
-            value={aspect}
-            onChange={(e) => setAspect(e.target.value as AspectId)}
+            value={platformLabel}
+            onChange={(e) => {
+              const label = e.target.value;
+              setPlatformLabel(label);
+              setAspect(resolvePlatformPreset(label));
+            }}
           >
-            {frames.map((f) => (
-              <option key={f.id} value={f.id}>
-                {f.platform} · {f.label}
+            {platforms.map((p) => (
+              <option key={p.label} value={p.label}>
+                {p.label}
               </option>
             ))}
           </select>
 
-          <label className="field">Hook / title card text</label>
+          <label className="field">Hook / title text</label>
           <input
             value={hookLine}
             onChange={(e) => {
@@ -345,6 +504,21 @@ function App() {
                 type="file"
                 accept=".srt,text/plain"
                 onChange={(e) => void onSrtFile(e.target.files?.[0] ?? null)}
+              />
+            </label>
+          </div>
+
+          <div className="actions" style={{ marginTop: "0.5rem" }}>
+            <button type="button" className="btn btn-primary" onClick={saveProjectFile}>
+              Save .ct
+            </button>
+            <label className="file-btn">
+              Open .ct
+              <input
+                ref={projectInputRef}
+                type="file"
+                accept=".ct,application/json"
+                onChange={(e) => void openProjectFile(e.target.files?.[0] ?? null)}
               />
             </label>
           </div>
@@ -385,10 +559,11 @@ function App() {
             Safe zone: top {(safe.top * 100).toFixed(0)}% · bottom{" "}
             {(safe.bottom * 100).toFixed(0)}%. {safe.notes[0]}
           </p>
+          <p className="kbd-hint">Space play · ↑↓ cues · S split · M merge</p>
         </aside>
 
         <main className="panel">
-          {(tab === "studio" || tab === "transcript" || tab === "export") && (
+          {showPreview && (
             <>
               <h3>Preview · {template.label}</h3>
               <div className="video-shell" data-aspect={aspect} ref={wrapRef}>
@@ -417,12 +592,245 @@ function App() {
             </>
           )}
 
-          {tab === "plugins" && (
+          {tab === "studio" && (
             <>
-              <h3>Export plugins · {plugins.length}</h3>
+              <h3 style={{ marginTop: "1rem" }}>Transcript</h3>
               <p className="notes">
-                One-click packs for CapCut, YouTube, TikTok, Premiere, DaVinci,
-                FFmpeg, Remotion, Whisper, OBS, and Reels.
+                Paste voiceover or Whisper <code>verbose_json</code>. Generate, then
+                fine-tune in the cue list.
+              </p>
+              <textarea
+                value={transcript}
+                onChange={(e) => setTranscript(e.target.value)}
+                rows={6}
+              />
+              <div className="actions">
+                <button type="button" className="btn btn-primary" onClick={applyTranscript}>
+                  Generate captions
+                </button>
+                <button
+                  type="button"
+                  className="btn"
+                  onClick={() => {
+                    setCues(
+                      transcriptToCues(transcript, {
+                        style: "karaoke",
+                        maxWords: 10,
+                      }),
+                    );
+                    setSelectedCue(0);
+                  }}
+                >
+                  Karaoke style
+                </button>
+              </div>
+            </>
+          )}
+
+          {tab === "style" && (
+            <>
+              <h3 style={{ marginTop: "1rem" }}>Brand kits</h3>
+              <div className="chip-row">
+                {kits.map((k) => (
+                  <button
+                    key={k.id}
+                    type="button"
+                    className="chip"
+                    data-active={k.id === brand.id}
+                    onClick={() => {
+                      const next = setActiveBrandKit(k.id!);
+                      setBrand(next);
+                    }}
+                  >
+                    {k.name ?? k.channelName}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  className="chip"
+                  onClick={() => {
+                    const next = upsertBrandKit({
+                      ...brand,
+                      id: undefined,
+                      name: `${brand.channelName} copy`,
+                      channelName: brand.channelName,
+                    });
+                    setBrand(next);
+                    setKits(listBrandKits());
+                  }}
+                >
+                  + Duplicate kit
+                </button>
+              </div>
+
+              <label className="field">Kit name</label>
+              <input
+                value={brand.name ?? ""}
+                onChange={(e) => setBrand({ ...brand, name: e.target.value })}
+              />
+              <label className="field">Channel</label>
+              <input
+                value={brand.channelName}
+                onChange={(e) => setBrand({ ...brand, channelName: e.target.value })}
+              />
+              <label className="field">Tagline</label>
+              <input
+                value={brand.tagline ?? ""}
+                onChange={(e) => setBrand({ ...brand, tagline: e.target.value })}
+              />
+              <label className="field">Lower-third title</label>
+              <input
+                value={brand.lowerThirdTitle ?? ""}
+                onChange={(e) =>
+                  setBrand({ ...brand, lowerThirdTitle: e.target.value })
+                }
+              />
+              <label className="field">Lower-third subtitle</label>
+              <input
+                value={brand.lowerThirdSubtitle ?? ""}
+                onChange={(e) =>
+                  setBrand({ ...brand, lowerThirdSubtitle: e.target.value })
+                }
+              />
+
+              <div className="color-row">
+                <label className="field">
+                  Primary
+                  <input
+                    type="color"
+                    value={brand.primaryColor}
+                    onChange={(e) => {
+                      const primaryColor = e.target.value;
+                      setBrand({
+                        ...brand,
+                        primaryColor,
+                        caption: {
+                          ...(brand.caption ?? DEFAULT_CAPTION_STYLE),
+                          highlightColor: primaryColor,
+                        },
+                      });
+                    }}
+                  />
+                </label>
+                <label className="field">
+                  Text
+                  <input
+                    type="color"
+                    value={brand.secondaryColor}
+                    onChange={(e) => {
+                      const secondaryColor = e.target.value;
+                      setBrand({
+                        ...brand,
+                        secondaryColor,
+                        caption: {
+                          ...(brand.caption ?? DEFAULT_CAPTION_STYLE),
+                          color: secondaryColor,
+                        },
+                      });
+                    }}
+                  />
+                </label>
+                <label className="field">
+                  Background
+                  <input
+                    type="color"
+                    value={brand.backgroundColor}
+                    onChange={(e) =>
+                      setBrand({ ...brand, backgroundColor: e.target.value })
+                    }
+                  />
+                </label>
+              </div>
+
+              <label className="field">Heading font</label>
+              <select
+                value={brand.fonts?.heading ?? brand.fontDisplay}
+                onChange={(e) => patchFonts("heading", e.target.value)}
+              >
+                {fonts.map((f) => (
+                  <option key={f.id} value={f.id}>
+                    {f.family}
+                  </option>
+                ))}
+              </select>
+              <label className="field">Body font</label>
+              <select
+                value={brand.fonts?.body ?? brand.fontBody}
+                onChange={(e) => patchFonts("body", e.target.value)}
+              >
+                {fonts.map((f) => (
+                  <option key={f.id} value={f.id}>
+                    {f.family}
+                  </option>
+                ))}
+              </select>
+              <label className="field">Caption font</label>
+              <select
+                value={brand.fonts?.caption ?? brand.fontCaption ?? brand.fontBody}
+                onChange={(e) => patchFonts("caption", e.target.value)}
+              >
+                {fonts.map((f) => (
+                  <option key={f.id} value={f.id}>
+                    {f.family}
+                  </option>
+                ))}
+              </select>
+
+              <h3 style={{ marginTop: "1rem" }}>Caption style</h3>
+              <label className="field">Size (1080p px)</label>
+              <input
+                type="number"
+                value={captionStyle.fontSize}
+                onChange={(e) => patchCaption({ fontSize: Number(e.target.value) })}
+              />
+              <label className="field">Position</label>
+              <select
+                value={captionStyle.position}
+                onChange={(e) =>
+                  patchCaption({
+                    position: e.target.value as CaptionStyle["position"],
+                  })
+                }
+              >
+                <option value="top">top</option>
+                <option value="center">center</option>
+                <option value="bottom">bottom</option>
+              </select>
+              <label className="field">Animation</label>
+              <select
+                value={captionStyle.animation}
+                onChange={(e) =>
+                  patchCaption({ animation: e.target.value as CaptionAnimation })
+                }
+              >
+                {ANIMATIONS.map((a) => (
+                  <option key={a} value={a}>
+                    {a}
+                  </option>
+                ))}
+              </select>
+
+              <div className="actions" style={{ marginTop: "0.75rem" }}>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => {
+                    const saved = upsertBrandKit(brand);
+                    setBrand(saved);
+                    setKits(listBrandKits());
+                  }}
+                >
+                  Save brand kit
+                </button>
+              </div>
+            </>
+          )}
+
+          {tab === "destinations" && (
+            <>
+              <h3 style={{ marginTop: "1rem" }}>Export destinations · {plugins.length}</h3>
+              <p className="notes">
+                One-click packs for editors and platforms. Same brand + cues you previewed.
               </p>
               <div className="chip-row">
                 {plugins.map((p) => (
@@ -457,186 +865,14 @@ function App() {
                 </button>
               </div>
               <pre className="recipe" style={{ marginTop: "0.75rem" }}>
-                {pluginNotes || "Select a plugin, then Download pack or Preview."}
+                {pluginNotes || "Select a destination, then Download pack."}
               </pre>
-            </>
-          )}
 
-          {tab === "transcript" && (
-            <>
-              <h3>Transcript → cues</h3>
-              <p className="notes">
-                Paste plain text or Whisper <code>verbose_json</code>. Blank lines
-                become cue breaks. Timing is approximate — fine-tune in the cue list.
-              </p>
-              <textarea
-                value={transcript}
-                onChange={(e) => setTranscript(e.target.value)}
-                rows={10}
-              />
+              <h3 style={{ marginTop: "1rem" }}>Formats</h3>
               <div className="actions">
-                <button type="button" className="btn btn-primary" onClick={applyTranscript}>
-                  Generate captions
-                </button>
                 <button
                   type="button"
                   className="btn"
-                  onClick={() =>
-                    setCues(
-                      transcriptToCues(transcript, {
-                        style: "karaoke",
-                        maxWords: 10,
-                      }),
-                    )
-                  }
-                >
-                  Karaoke style
-                </button>
-              </div>
-            </>
-          )}
-
-          {tab === "brand" && (
-            <>
-              <h3>Brand kit</h3>
-              <p className="notes">Saved in this browser (localStorage).</p>
-              <label className="field">Channel name</label>
-              <input
-                value={brand.channelName}
-                onChange={(e) => setBrand({ ...brand, channelName: e.target.value })}
-              />
-              <label className="field">Lower-third title</label>
-              <input
-                value={brand.lowerThirdTitle ?? ""}
-                onChange={(e) =>
-                  setBrand({ ...brand, lowerThirdTitle: e.target.value })
-                }
-              />
-              <label className="field">Lower-third subtitle</label>
-              <input
-                value={brand.lowerThirdSubtitle ?? ""}
-                onChange={(e) =>
-                  setBrand({ ...brand, lowerThirdSubtitle: e.target.value })
-                }
-              />
-              <label className="field">Primary color</label>
-              <input
-                type="color"
-                value={brand.primaryColor}
-                onChange={(e) => setBrand({ ...brand, primaryColor: e.target.value })}
-              />
-              <label className="field">Text color</label>
-              <input
-                type="color"
-                value={brand.secondaryColor}
-                onChange={(e) =>
-                  setBrand({ ...brand, secondaryColor: e.target.value })
-                }
-              />
-              <label className="field">Background</label>
-              <input
-                type="color"
-                value={brand.backgroundColor}
-                onChange={(e) =>
-                  setBrand({ ...brand, backgroundColor: e.target.value })
-                }
-              />
-              <label className="field">Display font</label>
-              <select
-                value={brand.fontDisplay}
-                onChange={(e) => setBrand({ ...brand, fontDisplay: e.target.value })}
-              >
-                {fonts.map((f) => (
-                  <option key={f.id} value={f.id}>
-                    {f.family}
-                  </option>
-                ))}
-              </select>
-            </>
-          )}
-
-          {tab === "motion" && (
-            <>
-              <h3>Kinetic presets</h3>
-              <div className="chip-row">
-                {PRESETS.map((p) => (
-                  <button
-                    key={p}
-                    className="chip"
-                    type="button"
-                    data-active={p === preset}
-                    onClick={() => setPreset(p)}
-                  >
-                    {p}
-                  </button>
-                ))}
-              </div>
-              <div className="stage">
-                <h2
-                  ref={stageRef}
-                  style={{
-                    fontFamily: fontStack(brand.fontDisplay),
-                    color: brand.secondaryColor,
-                  }}
-                >
-                  {hookLine}
-                </h2>
-              </div>
-            </>
-          )}
-
-          {tab === "fonts" && (
-            <>
-              <h3>Catalog · {fonts.length}</h3>
-              <div className="font-grid">
-                {fonts.map((font) => (
-                  <div key={font.id} className="font-card">
-                    <p className="name" style={{ fontFamily: fontStack(font.id) }}>
-                      {font.family}
-                    </p>
-                    <p className="meta">
-                      {font.role} · {font.useCases.slice(0, 2).join(" · ")}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-
-          {(tab === "cards" || tab === "export") && (
-            <>
-              <h3>Title card</h3>
-              <div className="chip-row">
-                {cards.map((c) => (
-                  <button
-                    key={c.id}
-                    className="chip"
-                    type="button"
-                    data-active={c.id === cardId}
-                    onClick={() => setCardId(c.id)}
-                  >
-                    {c.label}
-                  </button>
-                ))}
-              </div>
-              <textarea
-                rows={2}
-                value={cardText}
-                onChange={(e) => setCardText(e.target.value)}
-              />
-              <div className="card-preview">
-                {cardUrl ? <img src={cardUrl} alt="Title card" /> : null}
-              </div>
-            </>
-          )}
-
-          {tab === "export" && (
-            <>
-              <h3>Downloads</h3>
-              <div className="actions">
-                <button
-                  type="button"
-                  className="btn btn-primary"
                   onClick={() =>
                     downloadSubtitles(brandedCues, "srt", `${templateId}.srt`)
                   }
@@ -652,14 +888,8 @@ function App() {
                 >
                   VTT
                 </button>
-                <button
-                  type="button"
-                  className="btn"
-                  onClick={() =>
-                    downloadSubtitles(brandedCues, "ass", `${templateId}.ass`)
-                  }
-                >
-                  ASS
+                <button type="button" className="btn" onClick={downloadAss}>
+                  ASS (branded)
                 </button>
                 <button
                   type="button"
@@ -675,40 +905,165 @@ function App() {
               </div>
               <h3 style={{ marginTop: "1rem" }}>FFmpeg burn-in</h3>
               <pre className="recipe">{recipe}</pre>
-              <p className="notes">
-                Drop SRT into CapCut / Premiere / YouTube. Use ASS with the command
-                above for styled burn-in.
-              </p>
+            </>
+          )}
+
+          {tab === "more" && (
+            <>
+              <div className="chip-row" style={{ marginBottom: "0.75rem" }}>
+                {(
+                  [
+                    ["transcript", "Transcript"],
+                    ["motion", "Motion"],
+                    ["fonts", "Fonts"],
+                    ["cards", "Cards"],
+                  ] as const
+                ).map(([id, label]) => (
+                  <button
+                    key={id}
+                    type="button"
+                    className="chip"
+                    data-active={morePanel === id}
+                    onClick={() => setMorePanel(id)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+
+              {morePanel === "transcript" && (
+                <>
+                  <textarea
+                    value={transcript}
+                    onChange={(e) => setTranscript(e.target.value)}
+                    rows={10}
+                  />
+                  <div className="actions">
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={applyTranscript}
+                    >
+                      Generate captions
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {morePanel === "motion" && (
+                <>
+                  <div className="chip-row">
+                    {PRESETS.map((p) => (
+                      <button
+                        key={p}
+                        className="chip"
+                        type="button"
+                        data-active={p === preset}
+                        onClick={() => setPreset(p)}
+                      >
+                        {p}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="stage">
+                    <h2
+                      ref={stageRef}
+                      style={{
+                        fontFamily: fontStack(brand.fonts?.heading ?? brand.fontDisplay),
+                        color: brand.secondaryColor,
+                      }}
+                    >
+                      {hookLine}
+                    </h2>
+                  </div>
+                </>
+              )}
+
+              {morePanel === "fonts" && (
+                <div className="font-grid">
+                  {fonts.map((font) => (
+                    <div key={font.id} className="font-card">
+                      <p className="name" style={{ fontFamily: fontStack(font.id) }}>
+                        {font.family}
+                      </p>
+                      <p className="meta">
+                        {font.role} · {font.useCases.slice(0, 2).join(" · ")}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {morePanel === "cards" && (
+                <>
+                  <div className="chip-row">
+                    {cards.map((c) => (
+                      <button
+                        key={c.id}
+                        className="chip"
+                        type="button"
+                        data-active={c.id === cardId}
+                        onClick={() => setCardId(c.id)}
+                      >
+                        {c.label}
+                      </button>
+                    ))}
+                  </div>
+                  <textarea
+                    rows={2}
+                    value={cardText}
+                    onChange={(e) => setCardText(e.target.value)}
+                  />
+                  <div className="card-preview">
+                    {cardUrl ? <img src={cardUrl} alt="Title card" /> : null}
+                  </div>
+                </>
+              )}
             </>
           )}
 
           <p className="status">
             {ready ? "Fonts ready" : "Loading fonts…"} · {brandedCues.length} cues ·{" "}
-            {brand.channelName}
+            {brand.name ?? brand.channelName}
           </p>
         </main>
 
         <aside className="panel">
           <h3>Cue timeline</h3>
           <div className="actions" style={{ marginBottom: "0.55rem" }}>
+            <button type="button" className="btn" onClick={() => setCues((c) => addCue(c))}>
+              Add
+            </button>
             <button
               type="button"
               className="btn"
-              onClick={() => setCues((c) => addCue(c))}
+              onClick={() => setCues((c) => splitCue(c, selectedCue))}
             >
-              Add cue
+              Split
+            </button>
+            <button
+              type="button"
+              className="btn"
+              onClick={() => setCues((c) => mergeCues(c, selectedCue))}
+            >
+              Merge
             </button>
             <button
               type="button"
               className="btn"
               onClick={() => setCues((c) => normalizeCues(c))}
             >
-              Fix overlaps
+              Fix
             </button>
           </div>
           <div className="cue-list">
             {cues.map((cue, index) => (
-              <div className="cue-row" key={`${cue.start}-${index}`}>
+              <div
+                className="cue-row"
+                key={`${cue.start}-${index}`}
+                data-selected={index === selectedCue}
+                onClick={() => setSelectedCue(index)}
+              >
                 <header>
                   <span>
                     #{index + 1} · {cue.style ?? "subtitle"}
@@ -716,7 +1071,11 @@ function App() {
                   <button
                     type="button"
                     className="btn-danger"
-                    onClick={() => setCues((c) => removeCue(c, index))}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCues((c) => removeCue(c, index));
+                      setSelectedCue((i) => Math.max(0, Math.min(i, cues.length - 2)));
+                    }}
                   >
                     Remove
                   </button>
@@ -755,23 +1114,12 @@ function App() {
                   onChange={(e) =>
                     setCues((c) =>
                       updateCue(c, index, {
-                        style: e.target.value as CaptionCue["style"],
+                        style: e.target.value as CaptionStyleId,
                       }),
                     )
                   }
                 >
-                  {(
-                    [
-                      "subtitle",
-                      "title",
-                      "lower-third",
-                      "karaoke",
-                      "chapter",
-                      "end-card",
-                      "speaker",
-                      "burn",
-                    ] as const
-                  ).map((s) => (
+                  {STYLE_IDS.map((s) => (
                     <option key={s} value={s}>
                       {s}
                     </option>

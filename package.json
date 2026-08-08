@@ -1,7 +1,7 @@
 {
   "name": "cinematype",
-  "version": "0.5.0",
-  "description": "Captions & type for content creators — curl to studio, CapCut/YouTube packs, CLI, OFL fonts.",
+  "version": "0.6.0",
+  "description": "Local-first typography engine for creators — brand once, export captions everywhere.",
   "bin": {
     "cinematype": "./dist/cli.js"
   },

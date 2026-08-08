@@ -58,5 +58,34 @@ test("cli doctor exits 0", () => {
     stderr: "pipe",
   });
   expect(proc.exitCode).toBe(0);
-  expect(proc.stdout.toString()).toContain("plugins:");
+  expect(proc.stdout.toString()).toContain("destinations:");
+});
+
+test("cli project save and open", () => {
+  const dir = mkdtempSync(join(tmpdir(), "ct-proj-"));
+  const out = join(dir, "demo.ct");
+  const save = Bun.spawnSync(
+    [
+      "bun",
+      "run",
+      "src/cli.ts",
+      "project",
+      "save",
+      "--text",
+      "Hook line.\n\nValue line.",
+      "--out",
+      out,
+    ],
+    { cwd: root, stdout: "pipe", stderr: "pipe" },
+  );
+  expect(save.exitCode).toBe(0);
+  expect(readFileSync(out, "utf8")).toContain('"version": 1');
+
+  const open = Bun.spawnSync(
+    ["bun", "run", "src/cli.ts", "project", "open", "--file", out],
+    { cwd: root, stdout: "pipe", stderr: "pipe" },
+  );
+  expect(open.exitCode).toBe(0);
+  expect(open.stdout.toString()).toContain("cues:");
+  rmSync(dir, { recursive: true, force: true });
 });

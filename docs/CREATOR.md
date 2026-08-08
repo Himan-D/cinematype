@@ -12,10 +12,11 @@ Open http://localhost:5180
 1. Pick a template (YouTube opener, Shorts hook, …)
 2. Upload your video (or keep the demo)
 3. Paste a transcript → **Generate captions**
-4. Edit cue times in the right panel
-5. Set your **Brand** (name, colors) — saved in the browser
-6. **Export** → SRT / VTT / ASS + title PNG
-7. Copy the FFmpeg command to burn ASS into the video
+4. Edit cue times in the right panel (Split / Merge · keyboard shortcuts)
+5. **Style / Brand** — fonts, colors, caption look (saved in the browser)
+6. **Destinations** → CapCut / YouTube pack, or SRT / VTT / ASS + title PNG
+7. **Save .ct** to reopen the project later
+8. Copy the FFmpeg command to burn ASS into the video
 
 ## 2) CapCut / Premiere / YouTube
 
