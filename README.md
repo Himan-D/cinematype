@@ -100,7 +100,7 @@ downloadPluginPack("capcut", {
 });
 ```
 
-Docs: [docs/PRD.md](./docs/PRD.md) · [docs/CREATOR.md](./docs/CREATOR.md) · [docs/PLUGINS.md](./docs/PLUGINS.md) · [docs/ONBOARDING.md](./docs/ONBOARDING.md) · [CONTRIBUTING.md](./CONTRIBUTING.md) · [AGENTS.md](./AGENTS.md)
+Docs: [docs/PRD.md](./docs/PRD.md) · [docs/SDK.md](./docs/SDK.md) · [docs/CREATOR.md](./docs/CREATOR.md) · [docs/PLUGINS.md](./docs/PLUGINS.md) · [docs/ONBOARDING.md](./docs/ONBOARDING.md) · [CONTRIBUTING.md](./CONTRIBUTING.md) · [AGENTS.md](./AGENTS.md)
 
 ---
 
@@ -108,8 +108,10 @@ Docs: [docs/PRD.md](./docs/PRD.md) · [docs/CREATOR.md](./docs/CREATOR.md) · [d
 
 - **Studio** — live video preview, brand kits, caption editor, `project.ct`
 - **Export destinations** — CapCut, YouTube, TikTok, Reels, Premiere, DaVinci, FFmpeg, Whisper, Remotion, OBS
-- **Typography** — 18 OFL fonts · CaptionStyle · kinetic motion · title cards
-- **SDK** — React hooks/components · CLI · MIT software + OFL fonts
+- **Smart captions** — emphasis, reading-speed score, auto style, batch export, karaoke word cues
+- **Plugin SDK** — `registerPlugin` + community templates + team brand packs
+- **Typography** — 18 OFL fonts · custom fonts · CaptionStyle · kinetic motion · title cards
+- **SDK** — React hooks/components · CLI (`batch`, `smart`, `score`, `whisper`, `style`) · MIT + OFL
 
 ## License
 

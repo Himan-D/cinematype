@@ -83,10 +83,18 @@ Targets: preview &lt; 30s · export &lt; 60s · first-session export &gt; 50%.
 
 ## Roadmap
 
-- **Phase 1** — Studio hero, Brand Kit v2, CaptionStyle, project.ct, destinations IA, caption editor
-- **Phase 2** — Smart timing/emphasis, platform presets polish, karaoke, custom fonts, batch export
-- **Phase 3** — Local Whisper, quality scoring, auto style, multi-language
-- **Phase 4** — Plugin SDK, community templates, Remotion depth, team brand kits
+- **Phase 1** — Studio hero, Brand Kit v2, CaptionStyle, project.ct, destinations IA, caption editor — **DONE**
+- **Phase 2** — Smart timing/emphasis, platform caption defaults, karaoke word cues, custom fonts, batch export — **DONE**
+- **Phase 3** — Local Whisper CLI planner, quality scoring, auto style, multi-language helpers — **DONE**
+- **Phase 4** — Plugin SDK (`registerPlugin`), community templates, Remotion spring comps, team brand packs — **DONE**
+
+### Phase status notes
+
+| Phase | Ship surface |
+|-------|----------------|
+| 2 | `smartRetime`, `emphasizeCues`, `batchExportFormats`, `registerCustomFont`, `wordsToKaraokeWordCues`, `getPlatformCaptionDefaults` |
+| 3 | `planLocalWhisper` / `ct whisper`, `scoreCaptionQuality`, `suggestAutoStyle`, `detectLanguage` / `localizeCues` |
+| 4 | `createPlugin` / `registerPlugin`, `seedCommunityExamples`, Remotion spring component, `createTeamBrandPack` |
 
 ## Strategic sentence
 

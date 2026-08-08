@@ -31,3 +31,13 @@ export {
   type LoadFontsOptions,
   type FontLoadResult,
 } from "./loader";
+
+export {
+  registerCustomFont,
+  unregisterCustomFont,
+  listCustomFonts,
+  getCustomFont,
+  resolveFontId,
+  fontStackWithCustom,
+  type CustomFont,
+} from "./custom";

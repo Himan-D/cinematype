@@ -1,6 +1,6 @@
 {
   "name": "cinematype",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Local-first typography engine for creators — brand once, export captions everywhere.",
   "bin": {
     "cinematype": "./dist/cli.js"

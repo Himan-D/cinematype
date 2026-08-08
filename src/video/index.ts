@@ -35,8 +35,11 @@ export {
   PLATFORM_PRESETS,
   listPlatformPresets,
   resolvePlatformPreset,
+  PLATFORM_CAPTION_DEFAULTS,
+  getPlatformCaptionDefaults,
   type AspectId,
   type FrameSize,
+  type PlatformCaptionDefaults,
 } from "./aspects";
 
 export {
@@ -68,8 +71,66 @@ export {
   transcriptToCues,
   retimeCues,
   wordsToKaraokeCues,
+  wordsToKaraokeWordCues,
+  wordsToAssKaraokeLine,
   type TranscriptOptions,
 } from "./transcript";
+
+export {
+  detectEmphasis,
+  applyEmphasisMarkers,
+  emphasizeCues,
+  cueWpm,
+  validateReadingSpeed,
+  scoreCaptionQuality,
+  smartRetime,
+  type EmphasisSpan,
+  type ReadingSpeedIssue,
+  type CaptionQualityReport,
+} from "./smart";
+
+export {
+  batchExportFormats,
+  type BatchExportItem,
+  type BatchExportOptions,
+} from "./batch";
+
+export {
+  suggestAutoStyle,
+  applyAutoStyle,
+  detectLanguage,
+  isRtlLanguage,
+  localizeCues,
+  qualityGate,
+  type AutoStyleSuggestion,
+  type CaptionLanguage,
+} from "./auto-style";
+
+export {
+  planLocalWhisper,
+  runLocalWhisper,
+  type LocalWhisperOptions,
+  type LocalWhisperPlan,
+} from "./whisper-local";
+
+export {
+  registerCreatorTemplate,
+  unregisterCreatorTemplate,
+  listCommunityTemplates,
+  listAllCreatorTemplates,
+  getAnyCreatorTemplate,
+  registerTitleCardPreset,
+  listAllTitleCardPresets,
+  seedCommunityExamples,
+} from "./community";
+
+export {
+  createTeamBrandPack,
+  serializeTeamBrandPack,
+  parseTeamBrandPack,
+  importTeamBrandPack,
+  type TeamBrandPack,
+} from "./team";
 
 export {
   DEFAULT_BRAND_KIT,

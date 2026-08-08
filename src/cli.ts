@@ -10,15 +10,24 @@ import { mkdirSync, writeFileSync, readFileSync, existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 import {
   DEFAULT_BRAND_KIT,
+  applyAutoStyle,
+  batchExportFormats,
   createProject,
+  detectLanguage,
+  emphasizeCues,
   exportSubtitles,
   getCreatorTemplate,
-  listCreatorTemplates,
+  listAllCreatorTemplates,
   listPlugins,
   listTitleCardPresets,
   parseProject,
+  planLocalWhisper,
   runPlugin,
+  scoreCaptionQuality,
+  seedCommunityExamples,
   serializeProject,
+  smartRetime,
+  suggestAutoStyle,
   transcriptToCues,
   whisperJsonToCues,
   type AspectId,
@@ -27,7 +36,7 @@ import {
   type SubtitleFormat,
 } from "./index";
 
-const VERSION = "0.6.0";
+const VERSION = "0.7.0";
 const ROOT = join(import.meta.dir, "..");
 
 function printHelp() {
@@ -36,25 +45,17 @@ function printHelp() {
 Usage:
   cinematype studio [--port 5180]
   cinematype captions --text "..." [--format srt|vtt|ass] [--out file]
-  cinematype captions --file script.txt [--format srt] [--out file]
   cinematype plugin <name> --text "..." [--out-dir ./pack]
-  cinematype project save --text "..." [--out project.ct]
-  cinematype project open --file project.ct
+  cinematype batch --text "..." [--out-dir ./out] [--aspect youtube-shorts]
+  cinematype score --text "..." | --file cues.srt
+  cinematype smart --text "..." [--out file.srt]
+  cinematype style --text "..." [--platform "YouTube Shorts"]
+  cinematype whisper --input audio.mp3 [--model base] [--out-dir ./whisper]
+  cinematype project save|open ...
   cinematype templates
   cinematype plugins
   cinematype doctor
   cinematype help
-
-Destinations (plugin adapters): capcut youtube tiktok reels premiere davinci ffmpeg whisper remotion obs
-
-Quick start:
-  curl -fsSL https://raw.githubusercontent.com/Himan-D/cinematype/main/scripts/get-cinematype.sh | bash
-
-Examples:
-  cinematype captions --text "Stop scrolling. This changes everything." --out hook.srt
-  cinematype plugin capcut --text "Hook line here" --out-dir ./capcut-pack
-  cinematype project save --text "Hook.\\n\\nValue." --out my.ct
-  cinematype studio
 `);
 }
 
@@ -222,10 +223,11 @@ function cmdProject(args: string[]) {
 }
 
 function cmdDoctor() {
+  seedCommunityExamples();
   console.log(`cinematype ${VERSION}`);
   console.log(`bun: ${typeof Bun !== "undefined" ? Bun.version : "missing"}`);
   console.log(`root: ${ROOT}`);
-  console.log(`templates: ${listCreatorTemplates().length}`);
+  console.log(`templates: ${listAllCreatorTemplates().length}`);
   console.log(`destinations: ${listPlugins().length}`);
   console.log(`title cards: ${listTitleCardPresets().length}`);
   console.log("\nNext:");
@@ -234,7 +236,8 @@ function cmdDoctor() {
 }
 
 function cmdTemplates() {
-  for (const t of listCreatorTemplates()) {
+  seedCommunityExamples();
+  for (const t of listAllCreatorTemplates()) {
     console.log(`${t.id.padEnd(22)} ${t.label} — ${t.description}`);
   }
 }
@@ -242,6 +245,88 @@ function cmdTemplates() {
 function cmdPlugins() {
   for (const p of listPlugins()) {
     console.log(`${p.id.padEnd(12)} ${p.name} — ${p.description}`);
+  }
+}
+
+function cmdBatch(args: string[]) {
+  const outDir = resolve(argValue(args, "--out-dir") ?? argValue(args, "-o") ?? "./cinematype-batch");
+  const aspect = (argValue(args, "--aspect") ?? "youtube-shorts") as AspectId;
+  const basename = argValue(args, "--basename") ?? "captions";
+  const cues = toCues(loadText(args));
+  const items = batchExportFormats({
+    cues,
+    brand: DEFAULT_BRAND_KIT,
+    aspect,
+    basename,
+  });
+  mkdirSync(outDir, { recursive: true });
+  for (const item of items) {
+    const path = join(outDir, item.filename);
+    writeFileSync(path, item.content, "utf8");
+    console.log(`✓ ${path}`);
+  }
+}
+
+function cmdScore(args: string[]) {
+  const cues = toCues(loadText(args));
+  const report = scoreCaptionQuality(cues);
+  console.log(`score: ${report.score}/100`);
+  console.log(`cues:  ${report.cueCount}`);
+  console.log(`avgWpm:${report.avgWpm}`);
+  for (const issue of report.issues) {
+    console.log(`• [${issue.kind}] ${issue.message}`);
+  }
+}
+
+function cmdSmart(args: string[]) {
+  const out = resolve(argValue(args, "--out") ?? argValue(args, "-o") ?? "smart.srt");
+  let cues = toCues(loadText(args));
+  cues = smartRetime(cues);
+  if (args.includes("--emphasize")) cues = emphasizeCues(cues);
+  writeFileSync(out, exportSubtitles(cues, "srt"), "utf8");
+  const report = scoreCaptionQuality(cues);
+  console.log(`✓ wrote ${out} (score ${report.score}/100, ${cues.length} cues)`);
+}
+
+function cmdStyle(args: string[]) {
+  const text = loadText(args);
+  const platform = argValue(args, "--platform") ?? "youtube";
+  const suggestion = suggestAutoStyle({ transcript: text, platform });
+  const template = applyAutoStyle(text, platform);
+  const lang = detectLanguage(text);
+  console.log(`template: ${suggestion.templateId} (${template.label})`);
+  console.log(`style:    ${suggestion.style}`);
+  console.log(`aspect:   ${suggestion.aspect}`);
+  console.log(`language: ${lang}`);
+  console.log(`reason:   ${suggestion.reason}`);
+}
+
+async function cmdWhisper(args: string[]) {
+  const input = argValue(args, "--input") ?? argValue(args, "-i");
+  if (!input) {
+    console.error("Usage: cinematype whisper --input audio.mp3 [--model base] [--out-dir ./out]");
+    process.exit(1);
+  }
+  const plan = planLocalWhisper({
+    input,
+    model: argValue(args, "--model") ?? "base",
+    outDir: argValue(args, "--out-dir") ?? ".",
+    language: argValue(args, "--language"),
+  });
+  for (const n of plan.notes) console.log(`• ${n}`);
+  if (!plan.available) {
+    process.exit(1);
+  }
+  console.log(`$ ${plan.command.join(" ")}`);
+  if (args.includes("--run")) {
+    const { runLocalWhisper } = await import("./index");
+    const result = await runLocalWhisper({
+      input,
+      model: argValue(args, "--model") ?? "base",
+      outDir: argValue(args, "--out-dir") ?? ".",
+      language: argValue(args, "--language"),
+    });
+    process.exit(result.code);
   }
 }
 
@@ -264,6 +349,21 @@ async function main() {
     case "pack":
     case "destination":
       cmdPlugin(rest);
+      break;
+    case "batch":
+      cmdBatch(rest);
+      break;
+    case "score":
+      cmdScore(rest);
+      break;
+    case "smart":
+      cmdSmart(rest);
+      break;
+    case "style":
+      cmdStyle(rest);
+      break;
+    case "whisper":
+      await cmdWhisper(rest);
       break;
     case "project":
       cmdProject(rest);

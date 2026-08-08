@@ -175,3 +175,82 @@ export function resolvePlatformPreset(nameOrId: string): AspectId {
     `Unknown platform "${nameOrId}". Try: ${Object.keys(PLATFORM_PRESETS).join(", ")}`,
   );
 }
+
+/** Phase 2 — per-platform caption defaults (position + max width) */
+export interface PlatformCaptionDefaults {
+  aspect: AspectId;
+  captionPosition: "top" | "center" | "bottom";
+  maxCaptionWidthPct: number;
+  preferredStyle: "burn" | "subtitle" | "karaoke";
+}
+
+export const PLATFORM_CAPTION_DEFAULTS: Record<AspectId, PlatformCaptionDefaults> =
+  {
+    youtube: {
+      aspect: "youtube",
+      captionPosition: "bottom",
+      maxCaptionWidthPct: 80,
+      preferredStyle: "subtitle",
+    },
+    "youtube-shorts": {
+      aspect: "youtube-shorts",
+      captionPosition: "center",
+      maxCaptionWidthPct: 85,
+      preferredStyle: "burn",
+    },
+    tiktok: {
+      aspect: "tiktok",
+      captionPosition: "center",
+      maxCaptionWidthPct: 85,
+      preferredStyle: "burn",
+    },
+    reels: {
+      aspect: "reels",
+      captionPosition: "center",
+      maxCaptionWidthPct: 85,
+      preferredStyle: "burn",
+    },
+    stories: {
+      aspect: "stories",
+      captionPosition: "center",
+      maxCaptionWidthPct: 80,
+      preferredStyle: "burn",
+    },
+    square: {
+      aspect: "square",
+      captionPosition: "bottom",
+      maxCaptionWidthPct: 88,
+      preferredStyle: "subtitle",
+    },
+    portrait: {
+      aspect: "portrait",
+      captionPosition: "bottom",
+      maxCaptionWidthPct: 85,
+      preferredStyle: "burn",
+    },
+    "landscape-ultrawide": {
+      aspect: "landscape-ultrawide",
+      captionPosition: "bottom",
+      maxCaptionWidthPct: 70,
+      preferredStyle: "subtitle",
+    },
+    twitter: {
+      aspect: "twitter",
+      captionPosition: "bottom",
+      maxCaptionWidthPct: 85,
+      preferredStyle: "subtitle",
+    },
+    linkedin: {
+      aspect: "linkedin",
+      captionPosition: "bottom",
+      maxCaptionWidthPct: 80,
+      preferredStyle: "subtitle",
+    },
+  };
+
+export function getPlatformCaptionDefaults(
+  aspectOrLabel: AspectId | string,
+): PlatformCaptionDefaults {
+  const aspect = resolvePlatformPreset(aspectOrLabel);
+  return PLATFORM_CAPTION_DEFAULTS[aspect];
+}
