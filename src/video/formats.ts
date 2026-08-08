@@ -33,6 +33,52 @@ export interface AssOptions {
   primaryColour?: string; // ASS &HAABBGGRR
 }
 
+/**
+ * Convert #RRGGBB / #RGB / rgba() approx to ASS &HAABBGGRR (opaque unless alpha given).
+ * ASS uses AABBGGRR with inverted alpha (00 = opaque).
+ */
+export function hexToAssColour(hex: string): string {
+  const raw = hex.trim();
+  const short = raw.match(/^#([0-9a-fA-F]{3})$/);
+  const full = raw.match(/^#([0-9a-fA-F]{6})([0-9a-fA-F]{2})?$/);
+  const rgba = raw.match(
+    /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([\d.]+))?\s*\)$/i,
+  );
+
+  let r = 255;
+  let g = 255;
+  let b = 255;
+  let a = 1;
+
+  if (short) {
+    const s = short[1]!;
+    r = parseInt(s[0]! + s[0]!, 16);
+    g = parseInt(s[1]! + s[1]!, 16);
+    b = parseInt(s[2]! + s[2]!, 16);
+  } else if (full) {
+    const h = full[1]!;
+    r = parseInt(h.slice(0, 2), 16);
+    g = parseInt(h.slice(2, 4), 16);
+    b = parseInt(h.slice(4, 6), 16);
+    if (full[2]) a = parseInt(full[2], 16) / 255;
+  } else if (rgba) {
+    r = Number(rgba[1]);
+    g = Number(rgba[2]);
+    b = Number(rgba[3]);
+    a = rgba[4] !== undefined ? Number(rgba[4]) : 1;
+  } else {
+    return "&H00FFFFFF";
+  }
+
+  const assA = Math.round((1 - Math.min(1, Math.max(0, a))) * 255);
+  const toHex = (n: number) =>
+    Math.round(Math.min(255, Math.max(0, n)))
+      .toString(16)
+      .padStart(2, "0")
+      .toUpperCase();
+  return `&H${toHex(assA)}${toHex(b)}${toHex(g)}${toHex(r)}`;
+}
+
 function assTime(seconds: number): string {
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);

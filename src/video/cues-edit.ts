@@ -48,6 +48,63 @@ export function normalizeCues(cues: CaptionCue[]): CaptionCue[] {
   return sorted;
 }
 
+/**
+ * Split cue at `index` after `atWord` words (0-based word boundary).
+ * Default splits at the midpoint word.
+ */
+export function splitCue(
+  cues: CaptionCue[],
+  index: number,
+  atWord?: number,
+): CaptionCue[] {
+  if (index < 0 || index >= cues.length) return [...cues];
+  const cue = cues[index]!;
+  const words = cue.text.trim().split(/\s+/).filter(Boolean);
+  if (words.length < 2) return [...cues];
+
+  const mid = Math.floor(words.length / 2);
+  const splitAt = Math.min(
+    words.length - 1,
+    Math.max(1, atWord === undefined ? mid : atWord),
+  );
+  const leftWords = words.slice(0, splitAt);
+  const rightWords = words.slice(splitAt);
+  if (!leftWords.length || !rightWords.length) return [...cues];
+
+  const duration = Math.max(0.2, cue.end - cue.start);
+  const ratio = leftWords.length / words.length;
+  const midTime = round2(cue.start + duration * ratio);
+
+  const left: CaptionCue = {
+    ...cue,
+    text: leftWords.join(" "),
+    end: midTime,
+  };
+  const right: CaptionCue = {
+    ...cue,
+    text: rightWords.join(" "),
+    start: midTime,
+  };
+
+  return [...cues.slice(0, index), left, right, ...cues.slice(index + 1)];
+}
+
+/** Merge cue at `index` with the following cue */
+export function mergeCues(cues: CaptionCue[], index: number): CaptionCue[] {
+  if (index < 0 || index >= cues.length - 1) return [...cues];
+  const a = cues[index]!;
+  const b = cues[index + 1]!;
+  const merged: CaptionCue = {
+    ...a,
+    text: `${a.text.trim()} ${b.text.trim()}`.trim(),
+    end: Math.max(a.end, b.end),
+    style: a.style ?? b.style,
+    align: a.align ?? b.align,
+    speaker: a.speaker ?? b.speaker,
+  };
+  return [...cues.slice(0, index), merged, ...cues.slice(index + 2)];
+}
+
 function round2(n: number): number {
   return Math.round(n * 100) / 100;
 }
