@@ -99,38 +99,48 @@ function newKitId(): string {
 
 /** Normalize legacy kits: fill fonts + caption from flat fields / defaults */
 export function migrateBrandKit(raw: Partial<BrandKit> | null | undefined): BrandKit {
+  const input = raw ?? {};
   const merged: BrandKit = {
     ...DEFAULT_BRAND_KIT,
-    ...(raw ?? {}),
+    ...input,
   };
 
-  const heading = merged.fonts?.heading ?? merged.fontDisplay ?? DEFAULT_BRAND_KIT.fontDisplay;
-  const body = merged.fonts?.body ?? merged.fontBody ?? DEFAULT_BRAND_KIT.fontBody;
+  // Prefer explicit raw fonts / flat fields over DEFAULT nested fonts
+  const heading =
+    input.fonts?.heading ??
+    input.fontDisplay ??
+    DEFAULT_BRAND_KIT.fonts!.heading;
+  const body =
+    input.fonts?.body ?? input.fontBody ?? DEFAULT_BRAND_KIT.fonts!.body;
   const captionFont =
-    merged.fonts?.caption ??
-    merged.fontCaption ??
-    merged.fontBody ??
-    DEFAULT_BRAND_KIT.fontCaption ??
-    "space-grotesk";
+    input.fonts?.caption ??
+    input.fontCaption ??
+    input.fonts?.body ??
+    input.fontBody ??
+    DEFAULT_BRAND_KIT.fonts!.caption;
 
   merged.fonts = { heading, body, caption: captionFont };
   merged.fontDisplay = heading;
   merged.fontBody = body;
   merged.fontCaption = captionFont;
 
-  const baseCaption = { ...DEFAULT_CAPTION_STYLE, ...(merged.caption ?? {}) };
+  const baseCaption = {
+    ...DEFAULT_CAPTION_STYLE,
+    ...(DEFAULT_BRAND_KIT.caption ?? {}),
+    ...(input.caption ?? {}),
+  };
   merged.caption = {
     ...baseCaption,
-    fontFamily: merged.caption?.fontFamily ?? captionFont,
-    color: merged.caption?.color ?? merged.secondaryColor ?? baseCaption.color,
+    fontFamily: input.caption?.fontFamily ?? captionFont,
+    color: input.caption?.color ?? input.secondaryColor ?? baseCaption.color,
     highlightColor:
-      merged.caption?.highlightColor ??
-      merged.primaryColor ??
+      input.caption?.highlightColor ??
+      input.primaryColor ??
       baseCaption.highlightColor,
   };
 
-  if (!merged.id) merged.id = newKitId();
-  if (!merged.name) merged.name = merged.channelName || "Brand kit";
+  if (!merged.id) merged.id = input.id ?? newKitId();
+  if (!merged.name) merged.name = input.name ?? (merged.channelName || "Brand kit");
 
   return merged;
 }

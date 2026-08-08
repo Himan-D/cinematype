@@ -22,6 +22,7 @@ export {
   cuesToAss,
   parseSrt,
   formatSrtTime,
+  hexToAssColour,
   type AssOptions,
 } from "./formats";
 
@@ -30,6 +31,9 @@ export {
   listFrameSizes,
   getFrameSize,
   framePixels,
+  PLATFORM_PRESETS,
+  listPlatformPresets,
+  resolvePlatformPreset,
   type AspectId,
   type FrameSize,
 } from "./aspects";
@@ -69,15 +73,36 @@ export {
 
 export {
   DEFAULT_BRAND_KIT,
+  DEFAULT_CAPTION_STYLE,
   saveBrandKit,
   loadBrandKit,
   clearBrandKit,
+  listBrandKits,
+  saveBrandKits,
+  getActiveBrandKit,
+  setActiveBrandKit,
+  upsertBrandKit,
+  deleteBrandKit,
+  migrateBrandKit,
   brandOverlayOptions,
+  brandToAssOptions,
   applyBrandToCues,
   brandToCssVars,
   applyBrandCssVars,
   type BrandKit,
+  type CaptionStyle,
+  type CaptionAnimation,
 } from "./brand";
+
+export {
+  createProject,
+  serializeProject,
+  parseProject,
+  downloadProject,
+  isCinematypeProject,
+  type CinematypeProject,
+  type CreateProjectInput,
+} from "./project";
 
 export {
   ffmpegBurnInCommand,
@@ -101,4 +126,6 @@ export {
   addCue,
   shiftCues,
   normalizeCues,
+  splitCue,
+  mergeCues,
 } from "./cues-edit";

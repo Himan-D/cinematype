@@ -23,7 +23,7 @@ import {
   type SubtitleFormat,
 } from "./index";
 
-const VERSION = "0.5.0";
+const VERSION = "0.6.0";
 const ROOT = join(import.meta.dir, "..");
 
 function printHelp() {
