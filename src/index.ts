@@ -1,6 +1,6 @@
 /**
- * cinematype — typography kit for content creators
- * Fonts · Tokens · Motion · Video · Brand · Studio helpers
+ * cinematype — local-first typography engine for creators
+ * Fonts · Tokens · Motion · Video · Brand · Destinations · Studio
  */
 
 export {
@@ -20,6 +20,12 @@ export {
   isCssInjected,
   isFontAvailable,
   prefersReducedMotion,
+  registerCustomFont,
+  unregisterCustomFont,
+  listCustomFonts,
+  getCustomFont,
+  resolveFontId,
+  fontStackWithCustom,
   type FontAxis,
   type FontFaceFile,
   type FontFamily,
@@ -29,6 +35,7 @@ export {
   type FontLoadStatus,
   type LoadFontsOptions,
   type FontLoadResult,
+  type CustomFont,
 } from "./fonts";
 
 export {
@@ -90,6 +97,36 @@ export {
   transcriptToCues,
   retimeCues,
   wordsToKaraokeCues,
+  wordsToKaraokeWordCues,
+  wordsToAssKaraokeLine,
+  detectEmphasis,
+  applyEmphasisMarkers,
+  emphasizeCues,
+  cueWpm,
+  validateReadingSpeed,
+  scoreCaptionQuality,
+  smartRetime,
+  batchExportFormats,
+  suggestAutoStyle,
+  applyAutoStyle,
+  detectLanguage,
+  isRtlLanguage,
+  localizeCues,
+  qualityGate,
+  planLocalWhisper,
+  runLocalWhisper,
+  registerCreatorTemplate,
+  unregisterCreatorTemplate,
+  listCommunityTemplates,
+  listAllCreatorTemplates,
+  getAnyCreatorTemplate,
+  registerTitleCardPreset,
+  listAllTitleCardPresets,
+  seedCommunityExamples,
+  createTeamBrandPack,
+  serializeTeamBrandPack,
+  parseTeamBrandPack,
+  importTeamBrandPack,
   DEFAULT_BRAND_KIT,
   DEFAULT_CAPTION_STYLE,
   saveBrandKit,
@@ -115,6 +152,8 @@ export {
   PLATFORM_PRESETS,
   listPlatformPresets,
   resolvePlatformPreset,
+  PLATFORM_CAPTION_DEFAULTS,
+  getPlatformCaptionDefaults,
   hexToAssColour,
   ffmpegBurnInCommand,
   ffmpegTitleCardCommand,
@@ -152,6 +191,17 @@ export {
   type FfmpegBurnOptions,
   type FfmpegTitleCardOptions,
   type SafeZone,
+  type EmphasisSpan,
+  type ReadingSpeedIssue,
+  type CaptionQualityReport,
+  type BatchExportItem,
+  type BatchExportOptions,
+  type AutoStyleSuggestion,
+  type CaptionLanguage,
+  type LocalWhisperOptions,
+  type LocalWhisperPlan,
+  type TeamBrandPack,
+  type PlatformCaptionDefaults,
 } from "./video";
 
 export {
@@ -159,6 +209,12 @@ export {
   getPlugin,
   runPlugin,
   downloadPluginPack,
+  createPlugin,
+  registerPlugin,
+  unregisterPlugin,
+  listCommunityPlugins,
+  resolvePlugin,
+  runAnyPlugin,
   whisperJsonToCues,
   cuesToYoutubeChapters,
   cuesToRemotionSequence,
@@ -167,6 +223,7 @@ export {
   type PluginContext,
   type PluginResult,
   type CinematypePlugin,
+  type AnyPluginId,
 } from "./plugins";
 
-export const version = "0.6.0";
+export const version = "0.7.0";

@@ -75,7 +75,7 @@ export function retimeCues(
   });
 }
 
-/** One karaoke cue covering the full phrase */
+/** One karaoke cue covering the full phrase (progress-based overlay) */
 export function wordsToKaraokeCues(
   text: string,
   options: { startAt?: number; secondsPerWord?: number } = {},
@@ -92,6 +92,39 @@ export function wordsToKaraokeCues(
       style: "karaoke",
     },
   ];
+}
+
+/**
+ * Phase 2 karaoke polish: one cue per word with tight timings
+ * (better for ASS \k tags and Remotion word comps).
+ */
+export function wordsToKaraokeWordCues(
+  text: string,
+  options: { startAt?: number; secondsPerWord?: number } = {},
+): CaptionCue[] {
+  const words = text.trim().split(/\s+/).filter(Boolean);
+  const spw = options.secondsPerWord ?? 0.35;
+  const startAt = options.startAt ?? 0;
+  return words.map((word, i) => {
+    const start = round2(startAt + i * spw);
+    return {
+      start,
+      end: round2(start + spw),
+      text: word,
+      style: "karaoke" as const,
+    };
+  });
+}
+
+/** ASS karaoke line with {\k} timing (centiseconds per word) */
+export function wordsToAssKaraokeLine(
+  text: string,
+  options: { secondsPerWord?: number } = {},
+): string {
+  const words = text.trim().split(/\s+/).filter(Boolean);
+  const spw = options.secondsPerWord ?? 0.35;
+  const cs = Math.max(1, Math.round(spw * 100));
+  return words.map((w) => `{\\k${cs}}${w}`).join(" ");
 }
 
 function round2(n: number): number {

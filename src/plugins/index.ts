@@ -18,6 +18,17 @@ export {
   downloadPluginPack,
 } from "./registry";
 
+export {
+  createPlugin,
+  registerPlugin,
+  unregisterPlugin,
+  listCommunityPlugins,
+  getCommunityPlugin,
+  resolvePlugin,
+  runAnyPlugin,
+  type AnyPluginId,
+} from "./sdk";
+
 export { ffmpegPlugin } from "./ffmpeg";
 export { capcutPlugin } from "./capcut";
 export {

@@ -1,44 +1,35 @@
-import { capcutPlugin } from "./capcut";
-import { ffmpegPlugin } from "./ffmpeg";
-import { obsPlugin } from "./obs";
-import { davinciPlugin, premierePlugin } from "./premiere";
-import { remotionPlugin } from "./remotion";
-import { reelsPlugin, tiktokPlugin } from "./tiktok";
 import type {
   CinematypePlugin,
   PluginContext,
   PluginId,
   PluginResult,
 } from "./types";
-import { whisperPlugin } from "./whisper";
-import { youtubePlugin } from "./youtube";
 import { downloadBlob } from "../video/export";
+import { PLUGIN_REGISTRY } from "./builtin";
+import {
+  getCommunityPlugin,
+  listCommunityPlugins,
+  resolvePlugin,
+} from "./sdk";
 
-export const PLUGIN_REGISTRY: Record<PluginId, CinematypePlugin> = {
-  ffmpeg: ffmpegPlugin,
-  capcut: capcutPlugin,
-  youtube: youtubePlugin,
-  tiktok: tiktokPlugin,
-  reels: reelsPlugin,
-  premiere: premierePlugin,
-  davinci: davinciPlugin,
-  whisper: whisperPlugin,
-  remotion: remotionPlugin,
-  obs: obsPlugin,
-};
+export { PLUGIN_REGISTRY };
 
 export function listPlugins(): CinematypePlugin[] {
-  return Object.values(PLUGIN_REGISTRY);
+  return [...Object.values(PLUGIN_REGISTRY), ...listCommunityPlugins()];
 }
 
 export function getPlugin(id: PluginId | string): CinematypePlugin {
-  const plugin = PLUGIN_REGISTRY[id as PluginId];
-  if (!plugin) {
+  try {
+    return resolvePlugin(id);
+  } catch {
+    const community = getCommunityPlugin(id);
+    if (community) return community;
     throw new Error(
-      `Unknown plugin "${id}". Available: ${Object.keys(PLUGIN_REGISTRY).join(", ")}`,
+      `Unknown plugin "${id}". Available: ${listPlugins()
+        .map((p) => p.id)
+        .join(", ")}`,
     );
   }
-  return plugin;
 }
 
 export function runPlugin(
