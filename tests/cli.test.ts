@@ -89,3 +89,33 @@ test("cli project save and open", () => {
   expect(open.stdout.toString()).toContain("cues:");
   rmSync(dir, { recursive: true, force: true });
 });
+
+test("cli unknown destination fails with curated message", () => {
+  const proc = Bun.spawnSync(
+    ["bun", "run", "src/cli.ts", "plugin", "not-a-destination", "--text", "hi"],
+    { cwd: root, stdout: "pipe", stderr: "pipe" },
+  );
+  expect(proc.exitCode).toBe(1);
+  const err = proc.stderr.toString();
+  expect(err).toContain("not-a-destination");
+  expect(err).toContain("cinematype plugins");
+});
+
+test("cli unknown command names the mistake", () => {
+  const proc = Bun.spawnSync(["bun", "run", "src/cli.ts", "captio"], {
+    cwd: root,
+    stdout: "pipe",
+    stderr: "pipe",
+  });
+  expect(proc.exitCode).toBe(1);
+  expect(proc.stderr.toString()).toContain('Unknown command: captio');
+});
+
+test("cli captions rejects invalid format", () => {
+  const proc = Bun.spawnSync(
+    ["bun", "run", "src/cli.ts", "captions", "--text", "hi", "--format", "xml"],
+    { cwd: root, stdout: "pipe", stderr: "pipe" },
+  );
+  expect(proc.exitCode).toBe(1);
+  expect(proc.stderr.toString()).toContain("Formats: srt, vtt, ass");
+});
