@@ -53,7 +53,7 @@ describe("splitText", () => {
     const node = el("<p>hey you</p>");
     const result = splitText(node, { mode: "chars-words" });
     expect(result.words.length).toBe(2);
-    expect(result.words[0].querySelectorAll(".ct-char").length).toBe(3);
+    expect(result.words[0]!.querySelectorAll(".ct-char").length).toBe(3);
     // every char lives inside a word wrapper
     const orphans = result.chars.filter(
       (c) => !result.words.some((w) => w.contains(c)),

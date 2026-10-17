@@ -22,6 +22,6 @@
       "cinematype/*": ["./src/*"]
     }
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "playground", "scripts", "tests"]
+  "include": ["src/**/*", "playground/**/*", "scripts/**/*", "tests/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

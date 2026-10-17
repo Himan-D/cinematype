@@ -23,7 +23,9 @@ const ctx = {
 test("lists all creator plugins", () => {
   const plugins = listPlugins();
   expect(plugins.length).toBe(10);
-  expect(plugins.map((p) => p.id).sort()).toEqual(
+  expect(
+    plugins.map((p) => p.id).sort() as string[],
+  ).toEqual(
     [
       "capcut",
       "davinci",
