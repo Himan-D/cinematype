@@ -14,7 +14,7 @@ export type AnyPluginId = PluginId | (string & {});
 
 /** Create a plugin with required fields validated */
 export function createPlugin(
-  plugin: CinematypePlugin & { id: string },
+  plugin: Omit<CinematypePlugin, "id"> & { id: string },
 ): CinematypePlugin {
   if (!plugin.id || !plugin.name || typeof plugin.export !== "function") {
     throw new Error("createPlugin requires id, name, and export()");
@@ -23,7 +23,9 @@ export function createPlugin(
 }
 
 /** Register a community / custom destination (does not override built-ins) */
-export function registerPlugin(plugin: CinematypePlugin & { id: string }): void {
+export function registerPlugin(
+  plugin: Omit<CinematypePlugin, "id"> & { id: string },
+): void {
   const id = plugin.id;
   if (id in PLUGIN_REGISTRY) {
     throw new Error(
