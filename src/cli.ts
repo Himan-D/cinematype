@@ -29,6 +29,7 @@ import {
   smartRetime,
   suggestAutoStyle,
   transcriptToCues,
+  version,
   whisperJsonToCues,
   type AspectId,
   type CaptionCue,
@@ -36,7 +37,7 @@ import {
   type SubtitleFormat,
 } from "./index";
 
-const VERSION = "0.7.0";
+const VERSION = version;
 const ROOT = join(import.meta.dir, "..");
 
 function printHelp() {
@@ -118,6 +119,10 @@ async function cmdStudio(args: string[]) {
 
 function cmdCaptions(args: string[]) {
   const format = (argValue(args, "--format") ?? "srt") as SubtitleFormat;
+  if (format !== "srt" && format !== "vtt" && format !== "ass") {
+    console.error(`Unknown format "${format}". Formats: srt, vtt, ass`);
+    process.exit(1);
+  }
   const out = argValue(args, "--out") ?? argValue(args, "-o") ?? `captions.${format}`;
   const templateId = argValue(args, "--template");
   const cues = templateId
@@ -153,13 +158,20 @@ function cmdPlugin(args: string[]) {
     ? toCues(loadText(rest))
     : getCreatorTemplate("shorts-hook").cues;
 
-  const result = runPlugin(id, {
-    cues,
-    brand: { ...DEFAULT_BRAND_KIT, channelName: brandName },
-    aspect,
-    title,
-    videoPath: argValue(rest, "--video") ?? "your-video.mp4",
-  });
+  let result;
+  try {
+    result = runPlugin(id, {
+      cues,
+      brand: { ...DEFAULT_BRAND_KIT, channelName: brandName },
+      aspect,
+      title,
+      videoPath: argValue(rest, "--video") ?? "your-video.mp4",
+    });
+  } catch (err) {
+    console.error(`✗ ${err instanceof Error ? err.message : String(err)}`);
+    console.error(`Run 'cinematype plugins' to list destinations.`);
+    process.exit(1);
+  }
 
   mkdirSync(outDir, { recursive: true });
   for (const file of result.files ?? []) {
@@ -389,6 +401,7 @@ async function main() {
       printHelp();
       break;
     default:
+      console.error(`Unknown command: ${cmd}`);
       printHelp();
       process.exit(1);
   }
